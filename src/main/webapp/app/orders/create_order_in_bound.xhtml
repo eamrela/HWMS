@@ -1,0 +1,278 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:WMS="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>WMS</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+        <meta charset="utf-8"></meta>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+
+        <h:outputStylesheet name="assets/vendors/bootstrap/dist/css/bootstrap.css"/>
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+        <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
+        <h:outputScript library="primefaces" name="jquery/jquery-plugins.js" target="head" />
+        <h:outputScript library="js" name="jsfcrud.js" target="head" />
+        <h:outputStylesheet name="css/jsfcrud.css"/>
+        <h:outputStylesheet name="assets/vendors/nprogress/nprogress.css"/>
+        <h:outputStylesheet name="assets/vendors/iCheck/skins/flat/green.css"/>
+        <h:outputStylesheet name="assets/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css"/>
+        <h:outputStylesheet name="assets/vendors/jqvmap/dist/jqvmap.min.css"/>
+        <h:outputStylesheet name="assets/vendors/bootstrap-daterangepicker/daterangepicker.css"/>
+        <h:outputStylesheet name="assets/build/css/custom.min.css"/>
+        <f:metadata>
+            <f:viewAction action="#{ordersController.prepareCreateInBound}"/>
+        </f:metadata>
+    </h:head>
+    <h:body class="nav-md">
+        <div class="container body">
+            <div class="main_container">
+                <div class="col-md-3 left_col">
+                    <div class="left_col scroll-view">
+                        <div class="navbar nav_title navbar-default" style="border: 0;">
+                            <a href="#" class="site_title"><i class="fa fa-certificate"></i> <span>WMS</span></a>
+                        </div>
+                        <div class="clearfix"></div>
+
+                        <WMS:ProfileInfo fullName="#{usersController.loggedInuser.fullName}"
+                                         project="#{usersController.loggedInuser.project.projectName}"
+                                         region="#{usersController.loggedInuser.region.regionName}"/>
+                        <br></br>
+                        <WMS:NavigationMenu/>
+                      </div>
+                </div>
+            <WMS:Notifications/>
+            <div class="right_col" role="main">
+                <WMS:PageTitle largeTxt="Orders" smallTxt="Create In-Bound Orders"/>
+                <div class="clearfix"></div>
+                <h:form id="createInBoundForm">
+                    <p:growl id="growl" sticky="true"/>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="x_panel">
+                  <div class="x_title">
+                      <h4>Order Details</h4>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="control-label" for="orderCreator">Creator</label>
+                            <h:outputText id="orderCreator"  value="#{ordersController.selected.createdBy.fullName}" class="form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="orderProject">Project</label>
+                            <h:outputText id="orderProject"  value="#{ordersController.selected.project.projectName}" class="form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="orderRegion">Region</label>
+                            <h:outputText id="orderRegion"  value="#{ordersController.selected.region.regionName}" class="form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="orderType">Order Type</label>
+                            <h:outputText id="orderType"  value="#{ordersController.selected.orderType.typeName}" class="form-control"/>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+               <div class="col-md-8">
+                <div class="x_panel">
+                  <div class="x_title">
+                      <h4>User Input</h4>
+                      
+                    <div class="clearfix"></div>
+                    
+                  </div>
+                  <div class="x_content">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                            <label class="control-label" for="orderToWarehouse">Warehouse</label>
+                            <h:selectOneMenu id="orderToWarehouse"
+                                             value="#{ordersController.selected.toWarehouse}"
+                                             converter="WarehouseControllerConverter"
+                                             styleClass="form-control"
+                                             required="true"
+                                             requiredMessage="Warehouse can't be empty">
+                                <f:selectItem itemLabel="" itemValue="#{null}"/>
+                                <f:selectItems value="#{warehouseController.itemsForUser}" 
+                                               var="warehouseItem"
+                                               itemValue="#{warehouseItem}"
+                                               itemLabel="#{warehouseItem.warehouseName}"/>
+                            </h:selectOneMenu>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="itemSearch">Search Items</label>
+                                <p:autoComplete id="itemSearch" 
+                                            value="#{itemsController.selected}" 
+                                            completeMethod="#{itemsController.searchItems}" 
+                                            var="itemAC"
+                                            converter="ItemsControllerConverter"
+                                            itemValue="#{itemAC}"
+                                            itemLabel="#{itemAC.huaweiBom}"
+                                            maxResults="10"
+                                            >
+                                <p:ajax event="itemSelect" listener="#{ordersController.addSelectedLineItem}" 
+                                        update=":createInBoundForm:orderLineItems"/>
+                              </p:autoComplete>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="form-group">
+                            <label class="control-label" for="orderComment">Comment</label>
+                            <h:inputTextarea id="orderComment"  
+                                             value="#{ordersController.selected.orderComment}" 
+                                             rows="4"
+                                             class="form-control"/>
+                            </div>
+                        </div> 
+                    </div>
+                    <div class="row">
+                        <p:commandButton class="btn btn-default btn-block"
+                                    value="Bulk Upload" 
+                                    onclick="PF('bulkUploadDialog').show()" />
+                        <p:dataTable var="lineItem" 
+                                     id="orderLineItems"
+                                     value="#{ordersController.selected.orderLineItemCollection}"
+                                     rowKey="#{lineItem.itemId.huaweiBom}"
+                                     selection="#{orderLineItemController.selected}"
+                                     selectionMode="single">
+                            
+                            <p:ajax event="rowDblselect" listener="#{ordersController.removeFromLineItems}" 
+                                    update=":createInBoundForm:orderLineItems"/>
+                                    
+                                    
+                            <p:column headerText="BOM" style="font-size: 9px;">
+                                <h:outputText value="#{lineItem.itemId.huaweiBom}" />
+                            </p:column>
+                            <p:column headerText="English Des." style="font-size: 9px;">
+                                <h:outputText value="#{lineItem.itemId.englishDescription}" />
+                            </p:column>
+                            <p:column headerText="Arabic Des." style="font-size: 9px;">
+                                <h:outputText value="#{lineItem.itemId.arabicDescription}" />
+                            </p:column>
+                            <p:column headerText="QTY" style="font-size: 9px;">
+                                <h:inputText value="#{lineItem.qty}" class="form-control"/>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                  </div>
+                </div>
+                   <p:commandButton class="btn btn-default btn-block"  
+                                    value="CREATE ORDER" 
+                                    update=":OrderConfirmationForm" 
+                                    onclick="PF('OrderConformationDialog').show()"/>
+              </div>
+            </div>
+                </h:form>
+            
+            </div>
+            <WMS:Footer/>
+            
+            <p:dialog id="OrderConformationDlg" widgetVar="OrderConformationDialog" 
+                      modal="true" closable="true" closeOnEscape="true" 
+                      resizable="false" appendTo="@(body)" header="Confirm Order Creation" >
+            <h:form id="OrderConfirmationForm">
+                <h:panelGroup rendered="#{ordersController.selected != null}" >
+                <div class="row" style="width: 700px;">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                        <label class="control-label" for="requestCreator" >Creator</label>
+                        <h:outputText class="form-control" id="requestCreator" value="#{ordersController.selected.createdBy.fullName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestProject" >Project</label>
+                        <h:outputText class="form-control" id="requestProject" value="#{ordersController.selected.project.projectName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestRegion" >Region</label>
+                        <h:outputText class="form-control" id="requestRegion" value="#{ordersController.selected.region.regionName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestType" >Order Type</label>
+                        <h:outputText class="form-control" id="requestType" value="#{ordersController.selected.orderType.typeName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestToWarehouse" >In-Bound Warehouse</label>
+                        <h:outputText class="form-control" id="requestToWarehouse" value="#{ordersController.selected.toWarehouse.warehouseName}"/>
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-9">
+                        <p:dataTable var="requestLineItem" 
+                                     id="requestLineItems"
+                                     value="#{ordersController.selected.orderLineItemCollection}"
+                                     rowKey="#{requestLineItem.itemId.huaweiBom}">
+
+                            <p:column headerText="BOM" style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.itemId.huaweiBom}" />
+                            </p:column>
+                            <p:column headerText="English Des." style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.itemId.englishDescription}" />
+                            </p:column>
+                            <p:column headerText="Arabic Des." style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.itemId.arabicDescription}" />
+                            </p:column>
+                            <p:column headerText="QTY" style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.qty}" />
+                            </p:column>
+                        </p:dataTable>
+                        
+                        <p:commandButton 
+                            actionListener="#{ordersController.createInBoundOrder}" 
+                            class="btn btn-block btn-success"
+                            value="CONFIRM AND CREATE IN-BOUND ORDER" 
+                            update=":createInBoundForm:growl" 
+                            oncomplete="handleSubmit(args,'OrderConformationDialog');"/>
+                    </div>
+                </div>  
+                </h:panelGroup>
+            </h:form>
+            </p:dialog>
+            
+            <p:dialog id="bulkUploadDialog" widgetVar="bulkUploadDialog" 
+                      modal="true" closable="true" closeOnEscape="true" 
+                      resizable="false" appendTo="@(body)" header="Bulk Upload" >
+                <h:form id="bulkUploadForm">
+                    <p:fileUpload fileUploadListener="#{ordersController.handleFileUpload}" 
+                                  mode="advanced" dragDropSupport="false"
+                        update=":createInBoundForm:growl,:createInBoundForm:orderLineItems" 
+                        sizeLimit="100000" fileLimit="3" allowTypes="/(\.|\/)(csv)$/" />
+                    
+                </h:form>
+            </p:dialog>
+            </div>
+        </div>
+        
+        
+    <script src="#{resource['assets/vendors/bootstrap/dist/js/bootstrap.min.js']}"></script>
+    <script src="#{resource['assets/vendors/fastclick/lib/fastclick.js']}"></script>
+    <script src="#{resource['assets/vendors/nprogress/nprogress.js']}"></script>
+    <script src="#{resource['assets/vendors/Chart.js/dist/Chart.min.js']}"></script>
+    <script src="#{resource['assets/vendors/gauge.js/dist/gauge.min.js']}"></script>
+    <script src="#{resource['assets/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js']}"></script>
+    <script src="#{resource['assets/vendors/iCheck/icheck.min.js']}"></script>
+    <script src="#{resource['assets/vendors/skycons/skycons.js']}"></script>
+    <script src="#{resource['assets/vendors/Flot/jquery.flot.js']}"></script>
+    <script src="#{resource['assets/vendors/Flot/jquery.flot.pie.js']}"></script>
+    <script src="#{resource['assets/vendors/Flot/jquery.flot.time.js']}"></script>
+    <script src="#{resource['assets/vendors/Flot/jquery.flot.stack.js']}"></script>
+    <script src="#{resource['assets/vendors/Flot/jquery.flot.resize.js']}"></script>
+    <script src="#{resource['assets/vendors/flot.orderbars/js/jquery.flot.orderBars.js']}"></script>
+    <script src="#{resource['assets/vendors/flot-spline/js/jquery.flot.spline.min.js']}"></script>
+    <script src="#{resource['assets/vendors/flot.curvedlines/curvedLines.js']}"></script>
+    <script src="#{resource['assets/vendors/DateJS/build/date.js']}"></script>
+    <script src="#{resource['assets/vendors/jqvmap/dist/jquery.vmap.js']}"></script>
+    <script src="#{resource['assets/vendors/jqvmap/dist/maps/jquery.vmap.world.js']}"></script>
+    <script src="#{resource['assets/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js']}"></script>
+    <script src="#{resource['assets/vendors/moment/min/moment.min.js']}"></script>
+    <script src="#{resource['assets/vendors/bootstrap-daterangepicker/daterangepicker.js']}"></script>
+    <script src="#{resource['assets/build/js/custom.min.js']}"></script>   
+    </h:body>
+</html>
+

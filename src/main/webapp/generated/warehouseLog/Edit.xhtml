@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="WarehouseLogEditDlg" widgetVar="WarehouseLogEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditWarehouseLogTitle}">
+            <h:form id="WarehouseLogEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{warehouseLogController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditWarehouseLogLabel_id}" for="id" />
+                        <p:inputText id="id" value="#{warehouseLogController.selected.id}" title="#{bundle.EditWarehouseLogTitle_id}" required="true" requiredMessage="#{bundle.EditWarehouseLogRequiredMessage_id}"/>
+                        <p:outputLabel value="#{bundle.EditWarehouseLogLabel_logComment}" for="logComment" />
+                        <p:inputText id="logComment" value="#{warehouseLogController.selected.logComment}" title="#{bundle.EditWarehouseLogTitle_logComment}" />
+                        <p:outputLabel value="#{bundle.EditWarehouseLogLabel_previousQty}" for="previousQty" />
+                        <p:inputText id="previousQty" value="#{warehouseLogController.selected.previousQty}" title="#{bundle.EditWarehouseLogTitle_previousQty}" />
+                        <p:outputLabel value="#{bundle.EditWarehouseLogLabel_currentQty}" for="currentQty" />
+                        <p:inputText id="currentQty" value="#{warehouseLogController.selected.currentQty}" title="#{bundle.EditWarehouseLogTitle_currentQty}" />
+                        <p:outputLabel value="#{bundle.EditWarehouseLogLabel_actionType}" for="actionType" />
+                        <p:selectOneMenu id="actionType" value="#{warehouseLogController.selected.actionType}" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{orderTypeController.itemsAvailableSelectOne}"
+                                           var="actionTypeItem"
+                                           itemValue="#{actionTypeItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditWarehouseLogLabel_actionBy}" for="actionBy" />
+                        <p:selectOneMenu id="actionBy" value="#{warehouseLogController.selected.actionBy}" required="true" requiredMessage="#{bundle.EditWarehouseLogRequiredMessage_actionBy}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{usersController.itemsAvailableSelectOne}"
+                                           var="actionByItem"
+                                           itemValue="#{actionByItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditWarehouseLogLabel_warehouseId}" for="warehouseId" />
+                        <p:selectOneMenu id="warehouseId" value="#{warehouseLogController.selected.warehouseId}" required="true" requiredMessage="#{bundle.EditWarehouseLogRequiredMessage_warehouseId}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{warehouseController.itemsAvailableSelectOne}"
+                                           var="warehouseIdItem"
+                                           itemValue="#{warehouseIdItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{warehouseLogController.update}" value="#{bundle.Save}" update="display,:WarehouseLogListForm:datalist,:growl" oncomplete="handleSubmit(args, 'WarehouseLogEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="WarehouseLogEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

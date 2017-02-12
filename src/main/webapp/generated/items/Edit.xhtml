@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ItemsEditDlg" widgetVar="ItemsEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditItemsTitle}">
+            <h:form id="ItemsEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{itemsController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditItemsLabel_huaweiBom}" for="huaweiBom" />
+                        <p:inputText id="huaweiBom" value="#{itemsController.selected.huaweiBom}" title="#{bundle.EditItemsTitle_huaweiBom}" required="true" requiredMessage="#{bundle.EditItemsRequiredMessage_huaweiBom}"/>
+                        <p:outputLabel value="#{bundle.EditItemsLabel_englishDescription}" for="englishDescription" />
+                        <p:inputText id="englishDescription" value="#{itemsController.selected.englishDescription}" title="#{bundle.EditItemsTitle_englishDescription}" />
+                        <p:outputLabel value="#{bundle.EditItemsLabel_arabicDescription}" for="arabicDescription" />
+                        <p:inputText id="arabicDescription" value="#{itemsController.selected.arabicDescription}" title="#{bundle.EditItemsTitle_arabicDescription}" />
+                        <p:outputLabel value="#{bundle.EditItemsLabel_customerOracleCode}" for="customerOracleCode" />
+                        <p:inputText id="customerOracleCode" value="#{itemsController.selected.customerOracleCode}" title="#{bundle.EditItemsTitle_customerOracleCode}" />
+                        <p:outputLabel value="#{bundle.EditItemsLabel_otherCode}" for="otherCode" />
+                        <p:inputText id="otherCode" value="#{itemsController.selected.otherCode}" title="#{bundle.EditItemsTitle_otherCode}" />
+                        <p:outputLabel value="#{bundle.EditItemsLabel_brand}" for="brand" />
+                        <p:inputText id="brand" value="#{itemsController.selected.brand}" title="#{bundle.EditItemsTitle_brand}" />
+                        <p:outputLabel value="#{bundle.EditItemsLabel_supplier}" for="supplier" />
+                        <p:inputText id="supplier" value="#{itemsController.selected.supplier}" title="#{bundle.EditItemsTitle_supplier}" />
+                        <p:outputLabel value="#{bundle.EditItemsLabel_unit}" for="unit" />
+                        <p:inputText id="unit" value="#{itemsController.selected.unit}" title="#{bundle.EditItemsTitle_unit}" />
+                        <p:outputLabel value="#{bundle.EditItemsLabel_itemCategory}" for="itemCategory" />
+                        <p:selectOneMenu id="itemCategory" value="#{itemsController.selected.itemCategory}" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{itemCategoryController.itemsAvailableSelectOne}"
+                                           var="itemCategoryItem"
+                                           itemValue="#{itemCategoryItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditItemsLabel_project}" for="project" />
+                        <p:selectOneMenu id="project" value="#{itemsController.selected.project}" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{projectController.itemsAvailableSelectOne}"
+                                           var="projectItem"
+                                           itemValue="#{projectItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditItemsLabel_addedBy}" for="addedBy" />
+                        <p:selectOneMenu id="addedBy" value="#{itemsController.selected.addedBy}" required="true" requiredMessage="#{bundle.EditItemsRequiredMessage_addedBy}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{usersController.itemsAvailableSelectOne}"
+                                           var="addedByItem"
+                                           itemValue="#{addedByItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{itemsController.update}" value="#{bundle.Save}" update="display,:ItemsListForm:datalist,:growl" oncomplete="handleSubmit(args, 'ItemsEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="ItemsEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

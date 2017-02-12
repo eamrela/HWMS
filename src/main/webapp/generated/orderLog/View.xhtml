@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="OrderLogViewDlg" widgetVar="OrderLogViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewOrderLogTitle}">
+            <h:form id="OrderLogViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{orderLogController.selected != null}">
+                        <h:outputText value="#{bundle.ViewOrderLogLabel_id}"/>
+                        <h:outputText value="#{orderLogController.selected.id}" title="#{bundle.ViewOrderLogTitle_id}"/>
+                        <h:outputText value="#{bundle.ViewOrderLogLabel_description}"/>
+                        <h:outputText value="#{orderLogController.selected.description}" title="#{bundle.ViewOrderLogTitle_description}"/>
+                        <h:outputText value="#{bundle.ViewOrderLogLabel_orderId}"/>
+                        <h:outputText value="#{orderLogController.selected.orderId}" title="#{bundle.ViewOrderLogTitle_orderId}"/>
+                        <h:outputText value="#{bundle.ViewOrderLogLabel_actionBy}"/>
+                        <h:outputText value="#{orderLogController.selected.actionBy}" title="#{bundle.ViewOrderLogTitle_actionBy}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="OrderLogViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

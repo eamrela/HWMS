@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="OrderStatusEditDlg" widgetVar="OrderStatusEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditOrderStatusTitle}">
+            <h:form id="OrderStatusEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{orderStatusController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditOrderStatusLabel_statusName}" for="statusName" />
+                        <p:inputText id="statusName" value="#{orderStatusController.selected.statusName}" title="#{bundle.EditOrderStatusTitle_statusName}" required="true" requiredMessage="#{bundle.EditOrderStatusRequiredMessage_statusName}"/>
+                        <p:outputLabel value="#{bundle.EditOrderStatusLabel_statusDescription}" for="statusDescription" />
+                        <p:inputText id="statusDescription" value="#{orderStatusController.selected.statusDescription}" title="#{bundle.EditOrderStatusTitle_statusDescription}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{orderStatusController.update}" value="#{bundle.Save}" update="display,:OrderStatusListForm:datalist,:growl" oncomplete="handleSubmit(args, 'OrderStatusEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="OrderStatusEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

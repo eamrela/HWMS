@@ -1,0 +1,387 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:WMS="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>WMS</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+        <meta charset="utf-8"></meta>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+
+        <h:outputStylesheet name="assets/vendors/bootstrap/dist/css/bootstrap.css"/>
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+        <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
+        <h:outputScript library="primefaces" name="jquery/jquery-plugins.js" target="head" />
+        <h:outputScript library="js" name="jsfcrud.js" target="head" />
+        <h:outputStylesheet name="css/jsfcrud.css"/>
+        <h:outputStylesheet name="assets/vendors/nprogress/nprogress.css"/>
+        <h:outputStylesheet name="assets/vendors/iCheck/skins/flat/green.css"/>
+        <h:outputStylesheet name="assets/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css"/>
+        <h:outputStylesheet name="assets/vendors/jqvmap/dist/jqvmap.min.css"/>
+        <h:outputStylesheet name="assets/vendors/bootstrap-daterangepicker/daterangepicker.css"/>
+        <h:outputStylesheet name="assets/build/css/custom.min.css"/>
+        
+    </h:head>
+    <h:body class="nav-md">
+        <div class="container body">
+            <div class="main_container">
+                <div class="col-md-3 left_col">
+                    <div class="left_col scroll-view">
+                        <div class="navbar nav_title navbar-default" style="border: 0;">
+                            <a href="#" class="site_title"><i class="fa fa-certificate"></i> <span>WMS</span></a>
+                        </div>
+                        <div class="clearfix"></div>
+
+                        <WMS:ProfileInfo fullName="#{usersController.loggedInuser.fullName}"
+                                         project="#{usersController.loggedInuser.project.projectName}"
+                                         region="#{usersController.loggedInuser.region.regionName}" />
+                        <br></br>
+                        <WMS:NavigationMenu/>
+                      </div>
+                </div>
+            <WMS:Notifications/>
+            <div class="right_col" role="main">
+                <WMS:PageTitle largeTxt="Orders" smallTxt="All Pending/New Orders"/>
+                <div class="clearfix"></div>
+                <h:form id="ordersQueueForm">
+                    <p:growl id="growl" sticky="true"/>
+                <div class="row">
+              <div class="col-md-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                      <h4>Orders</h4>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <div class="row">
+                        <p:dataTable var="orderItem" 
+                                        id="ordersDatalist"
+                                        value="#{ordersController.warehouseOrders}"
+                                        paginator="true"
+                                        paginatorPosition="bottom"
+                                        rowKey="#{orderItem.orderId}"
+                                        selection="#{ordersController.selected}"
+                                        selectionMode="single">
+                                    
+                            <p:ajax event="rowSelect" update=":ordersQueueForm:orderDetails ,:ordersQueueForm:orderItems"/>
+                            
+                                    <p:column style="font-size: 9px;" headerText="Id">
+                                        <h:outputText value="#{orderItem.orderId}" />
+                                    </p:column>
+                                    <p:column style="font-size: 9px;" headerText="Requester">
+                                        <h:outputText value="#{orderItem.createdBy.fullName}" />
+                                    </p:column>
+                                    <p:column style="font-size: 9px;" headerText="Type" >
+                                        <h:outputText value="#{orderItem.orderType.typeName}" />
+                                    </p:column>
+                                    <p:column style="font-size: 9px;" headerText="Status">
+                                        <h:outputText value="#{orderItem.orderStatus.statusName}" />
+                                    </p:column>
+                                    <p:column style="font-size: 9px;" headerText="Status">
+                                        <h:outputText value="#{orderItem.orderStatus.statusName}" />
+                                    </p:column>
+                                    <p:column style="font-size: 9px;" headerText="Logging Time">
+                                        <h:outputText value="#{orderItem.loggingTime}" >
+                                            <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <f:facet name="footer">
+                                        <h:commandLink>
+                                          <img src="csv.png" alt=""/>
+                                          <p:dataExporter type="csv" target="ordersDatalist" fileName="orders" />
+                                      </h:commandLink>
+                                    </f:facet>
+                                </p:dataTable>
+                    </div>
+                  </div>
+                </div>
+              </div>
+                <div class="col-md-4">
+                     <div class="x_panel">
+                  <div class="x_title">
+                      <h4>Details</h4>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                      <h:panelGroup id="orderDetails">
+                    <div class="row">
+                        <div class="form-group">
+                        <label class="control-label" for="requestCreator" >Creator</label>
+                        <h:outputText class="form-control" id="requestCreator" value="#{ordersController.selected.createdBy.fullName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestProject" >Project</label>
+                        <h:outputText class="form-control" id="requestProject" value="#{ordersController.selected.project.projectName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestRegion" >Region</label>
+                        <h:outputText class="form-control" id="requestRegion" value="#{ordersController.selected.region.regionName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestType" >Order Type</label>
+                        <h:outputText class="form-control" id="requestType" value="#{ordersController.selected.orderType.typeName}"/>
+                        </div>
+                        <h:panelGroup rendered="#{ordersController.selected.orderType.typeName=='In-Bound'}">
+                        <div class="form-group">
+                        <label class="control-label" for="inRequestToWarehouse" >In-Bound Warehouse</label>
+                        <h:outputText class="form-control" id="inRequestToWarehouse" value="#{ordersController.selected.toWarehouse.warehouseName}"/>
+                        </div>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{ordersController.selected.orderType.typeName=='Transfer'}">
+                        <div class="form-group">
+                        <label class="control-label" for="transRequestFromWarehouse" >From Warehouse</label>
+                        <h:outputText class="form-control" id="transRequestFromWarehouse" value="#{ordersController.selected.fromWarehouse.warehouseName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="transRequestToWarehouse" >To Warehouse</label>
+                        <h:outputText class="form-control" id="transRequestToWarehouse" value="#{ordersController.selected.toWarehouse.warehouseName}"/>
+                        </div>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{ordersController.selected.orderType.typeName=='Issued Material (OTS)'}">
+                        <div class="form-group">
+                        <label class="control-label" for="otsrRequestFromWarehouse" >From Warehouse</label>
+                        <h:outputText class="form-control" id="otsrRequestFromWarehouse" value="#{ordersController.selected.fromWarehouse.warehouseName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="otsrRequestEngineer" >Engineer</label>
+                        <h:outputText class="form-control" id="otsrRequestEngineer" value="#{ordersController.selected.engineer.fullName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="otsrRequestSite" >Site</label>
+                        <h:outputText class="form-control" id="otsrRequestSite" value="#{ordersController.selected.site}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="otsrRequestSiteLog" >Site Log</label>
+                        <h:outputText class="form-control" id="otsrRequestSiteLog" value="#{ordersController.selected.siteLog}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="otsRequestActionDate" >Action Date</label>
+                        <h:outputText class="form-control" id="otsRequestActionDate" value="#{ordersController.selected.actionDate}">
+                            <f:convertDateTime pattern="yyyy-MM-dd"/>
+                        </h:outputText>
+                        </div>
+                        </h:panelGroup>
+                    </div>
+                      </h:panelGroup>
+                 </div>
+                 </div>
+                </div>
+                <div class="col-md-8">
+                     <div class="x_panel">
+                  <div class="x_title">
+                      <h4>Items</h4>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <h:panelGroup id="orderItems">
+                        <h:panelGroup rendered="#{ordersController.selected.orderType.typeName=='In-Bound'}">
+                          <div class="row">
+                            <p:dataTable var="inRequestLineItem" 
+                                     id="inRequestLineItems"
+                                     value="#{ordersController.selected.orderLineItemCollection}"
+                                     rowKey="#{inRequestLineItem.itemId.huaweiBom}"
+                                     selection="#{ordersController.selectedItems}"
+                                     selectionMode="multiple">
+                                <p:ajax event="rowSelect" update=":ordersQueueForm:inApproveBtn , :ordersQueueForm:inRejectBtn "/>
+                                
+                            <p:column headerText="BOM" style="font-size: 9px;">
+                                <h:outputText value="#{inRequestLineItem.itemId.huaweiBom}" />
+                            </p:column>
+                            <p:column headerText="English Des." style="font-size: 9px;">
+                                <h:outputText value="#{inRequestLineItem.itemId.englishDescription}" />
+                            </p:column>
+                            <p:column headerText="Arabic Des." style="font-size: 9px;">
+                                <h:outputText value="#{inRequestLineItem.itemId.arabicDescription}" />
+                            </p:column>
+                            <p:column headerText="QTY" style="font-size: 9px;">
+                                <h:outputText value="#{inRequestLineItem.qty}" />
+                            </p:column>
+                            <p:column headerText="Status" style="font-size: 9px;">
+                                <h:outputText value="#{inRequestLineItem.lineItemStatus.statusName}" />
+                            </p:column>
+                            </p:dataTable>
+                          </div>
+                          <div class="row">
+                            <div class="form-group">
+                                    <div class="col-md-6">
+                                        <p:commandButton 
+                                            disabled="#{ordersController.selectedItems==null}"
+                                            id="inApproveBtn" 
+                                            value="Approve" 
+                                            class="btn btn-block btn-success"
+                                            actionListener="#{ordersController.handleApprove}"
+                                            update=":ordersQueueForm:inRequestLineItems, 
+                                                    :ordersQueueForm:ordersDatalist, 
+                                                    :ordersQueueForm:growl"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p:commandButton 
+                                            disabled="#{ordersController.selectedItems==null}"
+                                            id="inRejectBtn" 
+                                            value="Reject" 
+                                            class="btn btn-block btn-danger"
+                                            actionListener="#{ordersController.handleReject}"
+                                            update=":ordersQueueForm:inRequestLineItems, 
+                                                    :ordersQueueForm:ordersDatalist, 
+                                                    :ordersQueueForm:growl"/>
+                                    </div>
+                           </div>
+                        </div>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{ordersController.selected.orderType.typeName=='Transfer'}">
+                            <div class="row">
+                               <p:dataTable var="transRequestLineItem" 
+                                     id="transRequestLineItems"
+                                     value="#{ordersController.selected.orderLineItemCollection}"
+                                     rowKey="#{transRequestLineItem.itemId.huaweiBom}"
+                                     selection="#{ordersController.selectedItems}"
+                                     selectionMode="multiple">
+                                   <p:ajax event="rowSelect" update=":ordersQueueForm:transApproveBtn , :ordersQueueForm:transRejectBtn "/>
+                                    <p:column headerText="BOM" style="font-size: 9px;">
+                                        <h:outputText value="#{transRequestLineItem.itemId.huaweiBom}" />
+                                    </p:column>
+                                    <p:column headerText="English Des." style="font-size: 9px;">
+                                        <h:outputText value="#{transRequestLineItem.itemId.englishDescription}" />
+                                    </p:column>
+                                    <p:column headerText="Arabic Des." style="font-size: 9px;">
+                                        <h:outputText value="#{transRequestLineItem.itemId.arabicDescription}" />
+                                    </p:column>
+                                    <p:column headerText="QTY" style="font-size: 9px;">
+                                        <h:outputText value="#{transRequestLineItem.qty}" />
+                                    </p:column>
+                                    <p:column headerText="Status" style="font-size: 9px;">
+                                        <h:outputText value="#{transRequestLineItem.lineItemStatus.statusName}" />
+                                    </p:column>
+                                </p:dataTable> 
+                            </div>
+                            <div class="row">
+                            <div class="form-group">
+                            <div class="col-md-6">
+                                <p:commandButton 
+                                    disabled="#{ordersController.selectedItems==null}"
+                                    id="transApproveBtn" 
+                                    value="Approve" 
+                                    class="btn btn-block btn-success"
+                                    actionListener="#{ordersController.handleApprove}"
+                                    update=":ordersQueueForm:transRequestLineItems, 
+                                            :ordersQueueForm:ordersDatalist, 
+                                            :ordersQueueForm:growl"/>
+                            </div>
+                            <div class="col-md-6">
+                                <p:commandButton 
+                                    disabled="#{ordersController.selectedItems==null}"
+                                    id="transRejectBtn" 
+                                    value="Reject" 
+                                    class="btn btn-block btn-danger"
+                                    actionListener="#{ordersController.handleReject}"
+                                    update=":ordersQueueForm:transRequestLineItems, 
+                                            :ordersQueueForm:ordersDatalist, 
+                                            :ordersQueueForm:growl"/>
+                            </div>
+                           </div>
+                        </div>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{ordersController.selected.orderType.typeName=='Issued Material (OTS)'}">
+                            <div class="row">
+                               <p:dataTable var="issueRequestLineItem" 
+                                     id="issueRequestLineItems"
+                                     value="#{ordersController.selected.orderLineItemCollection}"
+                                     rowKey="#{issueRequestLineItem.itemId.huaweiBom}"
+                                     selection="#{ordersController.selectedItems}"
+                                     selectionMode="multiple">
+                                   <p:ajax event="rowSelect" update=":ordersQueueForm:issueApproveBtn , :ordersQueueForm:issueRejectBtn "/>
+                                    <p:column headerText="BOM" style="font-size: 9px;">
+                                        <h:outputText value="#{issueRequestLineItem.itemId.huaweiBom}" />
+                                    </p:column>
+                                    <p:column headerText="English Des." style="font-size: 9px;">
+                                        <h:outputText value="#{issueRequestLineItem.itemId.englishDescription}" />
+                                    </p:column>
+                                    <p:column headerText="Arabic Des." style="font-size: 9px;">
+                                        <h:outputText value="#{issueRequestLineItem.itemId.arabicDescription}" />
+                                    </p:column>
+                                    <p:column headerText="QTY" style="font-size: 9px;">
+                                        <h:outputText value="#{issueRequestLineItem.qty}" />
+                                    </p:column>
+                                    <p:column headerText="Returnable" style="font-size: 9px;">
+                                        <h:outputText value="#{issueRequestLineItem.returnable}" />
+                                    </p:column>
+                                    <p:column headerText="Returnable Status" style="font-size: 9px;">
+                                        <h:outputText value="#{issueRequestLineItem.returnableStatus.statusName}" />
+                                    </p:column>
+                                    <p:column headerText="Status" style="font-size: 9px;">
+                                        <h:outputText value="#{issueRequestLineItem.lineItemStatus.statusName}" />
+                                    </p:column>
+                                </p:dataTable>  
+                            </div>
+                             <div class="row">
+                            <div class="form-group">
+                            <div class="col-md-6">
+                                <p:commandButton 
+                                    disabled="#{ordersController.selectedItems==null}"
+                                    id="issueApproveBtn" 
+                                    value="Approve" 
+                                    class="btn btn-block btn-success"
+                                    actionListener="#{ordersController.handleApprove}"
+                                    update=":ordersQueueForm:issueRequestLineItems, 
+                                            :ordersQueueForm:ordersDatalist, 
+                                            :ordersQueueForm:growl"/>
+                            </div>
+                            <div class="col-md-6">
+                                <p:commandButton 
+                                    disabled="#{ordersController.selectedItems==null}"
+                                    id="issueRejectBtn" 
+                                    value="Reject" 
+                                    class="btn btn-block btn-danger"
+                                    actionListener="#{ordersController.handleReject}"
+                                    update=":ordersQueueForm:issueRequestLineItems, 
+                                            :ordersQueueForm:ordersDatalist, 
+                                            :ordersQueueForm:growl"/>
+                            </div>
+                           </div>
+                        </div>
+                        </h:panelGroup>
+                      
+                      
+                    </h:panelGroup>
+                 </div>
+                 </div>
+                </div>
+            </div>
+                </h:form>
+                
+            </div>
+            <WMS:Footer/>
+            </div>
+        </div>
+        
+        
+    <script src="#{resource['assets/vendors/bootstrap/dist/js/bootstrap.min.js']}"></script>
+    <script src="#{resource['assets/vendors/fastclick/lib/fastclick.js']}"></script>
+    <script src="#{resource['assets/vendors/nprogress/nprogress.js']}"></script>
+    <script src="#{resource['assets/vendors/Chart.js/dist/Chart.min.js']}"></script>
+    <script src="#{resource['assets/vendors/gauge.js/dist/gauge.min.js']}"></script>
+    <script src="#{resource['assets/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js']}"></script>
+    <script src="#{resource['assets/vendors/iCheck/icheck.min.js']}"></script>
+    <script src="#{resource['assets/vendors/skycons/skycons.js']}"></script>
+    <script src="#{resource['assets/vendors/Flot/jquery.flot.js']}"></script>
+    <script src="#{resource['assets/vendors/Flot/jquery.flot.pie.js']}"></script>
+    <script src="#{resource['assets/vendors/Flot/jquery.flot.time.js']}"></script>
+    <script src="#{resource['assets/vendors/Flot/jquery.flot.stack.js']}"></script>
+    <script src="#{resource['assets/vendors/Flot/jquery.flot.resize.js']}"></script>
+    <script src="#{resource['assets/vendors/flot.orderbars/js/jquery.flot.orderBars.js']}"></script>
+    <script src="#{resource['assets/vendors/flot-spline/js/jquery.flot.spline.min.js']}"></script>
+    <script src="#{resource['assets/vendors/flot.curvedlines/curvedLines.js']}"></script>
+    <script src="#{resource['assets/vendors/DateJS/build/date.js']}"></script>
+    <script src="#{resource['assets/vendors/jqvmap/dist/jquery.vmap.js']}"></script>
+    <script src="#{resource['assets/vendors/jqvmap/dist/maps/jquery.vmap.world.js']}"></script>
+    <script src="#{resource['assets/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js']}"></script>
+    <script src="#{resource['assets/vendors/moment/min/moment.min.js']}"></script>
+    <script src="#{resource['assets/vendors/bootstrap-daterangepicker/daterangepicker.js']}"></script>
+    <script src="#{resource['assets/build/js/custom.min.js']}"></script>   
+    </h:body>
+</html>
+

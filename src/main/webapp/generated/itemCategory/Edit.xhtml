@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ItemCategoryEditDlg" widgetVar="ItemCategoryEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditItemCategoryTitle}">
+            <h:form id="ItemCategoryEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{itemCategoryController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditItemCategoryLabel_categoryName}" for="categoryName" />
+                        <p:inputText id="categoryName" value="#{itemCategoryController.selected.categoryName}" title="#{bundle.EditItemCategoryTitle_categoryName}" required="true" requiredMessage="#{bundle.EditItemCategoryRequiredMessage_categoryName}"/>
+                        <p:outputLabel value="#{bundle.EditItemCategoryLabel_categoryDescription}" for="categoryDescription" />
+                        <p:inputText id="categoryDescription" value="#{itemCategoryController.selected.categoryDescription}" title="#{bundle.EditItemCategoryTitle_categoryDescription}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{itemCategoryController.update}" value="#{bundle.Save}" update="display,:ItemCategoryListForm:datalist,:growl" oncomplete="handleSubmit(args, 'ItemCategoryEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="ItemCategoryEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

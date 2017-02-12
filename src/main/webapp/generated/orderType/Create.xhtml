@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="OrderTypeCreateDlg" widgetVar="OrderTypeCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateOrderTypeTitle}">
+            <h:form id="OrderTypeCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{orderTypeController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateOrderTypeLabel_typeName}" for="typeName" />
+                        <p:inputText id="typeName" value="#{orderTypeController.selected.typeName}" title="#{bundle.CreateOrderTypeTitle_typeName}" required="true" requiredMessage="#{bundle.CreateOrderTypeRequiredMessage_typeName}"/>
+                        <p:outputLabel value="#{bundle.CreateOrderTypeLabel_typeDescription}" for="typeDescription" />
+                        <p:inputText id="typeDescription" value="#{orderTypeController.selected.typeDescription}" title="#{bundle.CreateOrderTypeTitle_typeDescription}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{orderTypeController.create}" value="#{bundle.Save}" update="display,:OrderTypeListForm:datalist,:growl" oncomplete="handleSubmit(args,'OrderTypeCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="OrderTypeCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

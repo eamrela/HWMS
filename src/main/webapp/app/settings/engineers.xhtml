@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:WMS="http://xmlns.jcp.org/jsf/composite/components"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>WMS</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+        <meta charset="utf-8"></meta>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+
+        <h:outputStylesheet name="assets/vendors/bootstrap/dist/css/bootstrap.css"/>
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+        <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
+        <h:outputScript library="primefaces" name="jquery/jquery-plugins.js" target="head" />
+        <h:outputScript library="js" name="jsfcrud.js" target="head" />
+        <h:outputStylesheet name="css/jsfcrud.css"/>
+        <h:outputStylesheet name="assets/vendors/nprogress/nprogress.css"/>
+        <h:outputStylesheet name="assets/vendors/iCheck/skins/flat/green.css"/>
+        <h:outputStylesheet name="assets/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css"/>
+        <h:outputStylesheet name="assets/vendors/jqvmap/dist/jqvmap.min.css"/>
+        <h:outputStylesheet name="assets/vendors/bootstrap-daterangepicker/daterangepicker.css"/>
+        <h:outputStylesheet name="assets/build/css/custom.min.css"/>
+        
+    </h:head>
+    <h:body class="nav-md">
+        <div class="container body">
+            <div class="main_container">
+                <div class="col-md-3 left_col">
+                    <div class="left_col scroll-view">
+                        <div class="navbar nav_title navbar-default" style="border: 0;">
+                            <a href="#" class="site_title"><i class="fa fa-certificate"></i> <span>WMS</span></a>
+                        </div>
+                        <div class="clearfix"></div>
+
+                        <WMS:ProfileInfo fullName="#{usersController.loggedInuser.fullName}"
+                                         project="#{usersController.loggedInuser.project.projectName}"
+                                         region="#{usersController.loggedInuser.region.regionName}"/>
+                        <br></br>
+                        <WMS:NavigationMenu/>
+                      </div>
+                </div>
+            <WMS:Notifications/>
+            <div class="right_col" role="main">
+                <WMS:PageTitle largeTxt="Settings" smallTxt="Engineers"/>
+                <div class="clearfix"></div>
+                <h:form id="EngineersListForm">
+                    <p:growl id="growl" sticky="true"/>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <div class="row">
+                        <p:dataTable id="datalist" value="#{engineersController.items}" var="item"
+                                 selectionMode="single" selection="#{engineersController.selected}"
+                                 paginator="true"
+                                 paginatorPosition="bottom"
+                                 rowKey="#{item.id}"
+                                 rows="10"
+                                 rowsPerPageTemplate="10,20,30,40,50"
+                                 >
+
+                        <p:ajax event="rowSelect"   update="createButton"/>
+                        <p:ajax event="rowUnselect" update="createButton"/>
+
+                        <p:column style="font-size: 9px;">
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListEngineersTitle_id}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.id}"/>
+                        </p:column>
+                        <p:column style="font-size: 9px;">
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListEngineersTitle_fullName}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.fullName}"/>
+                        </p:column>
+                        <p:column style="font-size: 9px;">
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListEngineersTitle_company}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.company}"/>
+                        </p:column>
+                        <p:column style="font-size: 9px;">
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListEngineersTitle_project}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.project.projectName}"/>
+                        </p:column>
+                        <p:column style="font-size: 9px;">
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListEngineersTitle_region}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.region.regionName}"/>
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton id="createButton" icon="ui-icon-plus"   value="#{bundle.Create}" actionListener="#{engineersController.prepareCreate}" update=":EngineersCreateForm" oncomplete="PF('EngineersCreateDialog').show()"/>
+                            <h:commandLink>
+                                <img src="csv.png" alt=""/>
+                                <p:dataExporter type="csv" target="datalist" fileName="engineers" />
+                            </h:commandLink>
+                        </f:facet>
+                    </p:dataTable>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+                </h:form>
+            
+            </div>
+            <WMS:Footer/>
+            <p:dialog id="EngineersCreateDlg" widgetVar="EngineersCreateDialog" modal="true" closable="true" closeOnEscape="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateEngineersTitle}">
+            <h:form id="EngineersCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{engineersController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateEngineersLabel_fullName}" for="fullName" />
+                        <p:inputText id="fullName" value="#{engineersController.selected.fullName}" title="#{bundle.CreateEngineersTitle_fullName}" />
+                        <p:outputLabel value="#{bundle.CreateEngineersLabel_company}" for="company" />
+                        <p:inputText id="company" value="#{engineersController.selected.company}" title="#{bundle.CreateEngineersTitle_company}" />
+                        <p:outputLabel value="#{bundle.CreateEngineersLabel_project}" for="project" />
+                        <p:selectOneMenu id="project" value="#{engineersController.selected.project}" converter="ProjectControllerConverter">
+                            <f:selectItems value="#{projectController.itemsAvailableSelectOne}"
+                                           var="projectItem" 
+                                           itemValue="#{projectItem}"
+                                           itemLabel="#{projectItem.projectName}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateEngineersLabel_region}" for="region" />
+                        <p:selectOneMenu id="region" value="#{engineersController.selected.region}" converter="RegionControllerConverter">
+                            <f:selectItems value="#{regionController.itemsAvailableSelectOne}"
+                                           var="regionItem"
+                                           itemValue="#{regionItem}"
+                                           itemLabel="#{regionItem.regionName}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{engineersController.create}" value="#{bundle.Save}" update="display,:EngineersListForm:datalist,:EngineersListForm:growl" oncomplete="handleSubmit(args,'EngineersCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="EngineersCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+            </div>
+        </div>
+        
+        
+    <script src="#{resource['assets/vendors/bootstrap/dist/js/bootstrap.min.js']}"></script>
+    <script src="#{resource['assets/vendors/fastclick/lib/fastclick.js']}"></script>
+    <script src="#{resource['assets/vendors/nprogress/nprogress.js']}"></script>
+    <script src="#{resource['assets/vendors/Chart.js/dist/Chart.min.js']}"></script>
+    <script src="#{resource['assets/vendors/gauge.js/dist/gauge.min.js']}"></script>
+    <script src="#{resource['assets/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js']}"></script>
+    <script src="#{resource['assets/vendors/iCheck/icheck.min.js']}"></script>
+    <script src="#{resource['assets/vendors/skycons/skycons.js']}"></script>
+    <script src="#{resource['assets/vendors/Flot/jquery.flot.js']}"></script>
+    <script src="#{resource['assets/vendors/Flot/jquery.flot.pie.js']}"></script>
+    <script src="#{resource['assets/vendors/Flot/jquery.flot.time.js']}"></script>
+    <script src="#{resource['assets/vendors/Flot/jquery.flot.stack.js']}"></script>
+    <script src="#{resource['assets/vendors/Flot/jquery.flot.resize.js']}"></script>
+    <script src="#{resource['assets/vendors/flot.orderbars/js/jquery.flot.orderBars.js']}"></script>
+    <script src="#{resource['assets/vendors/flot-spline/js/jquery.flot.spline.min.js']}"></script>
+    <script src="#{resource['assets/vendors/flot.curvedlines/curvedLines.js']}"></script>
+    <script src="#{resource['assets/vendors/DateJS/build/date.js']}"></script>
+    <script src="#{resource['assets/vendors/jqvmap/dist/jquery.vmap.js']}"></script>
+    <script src="#{resource['assets/vendors/jqvmap/dist/maps/jquery.vmap.world.js']}"></script>
+    <script src="#{resource['assets/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js']}"></script>
+    <script src="#{resource['assets/vendors/moment/min/moment.min.js']}"></script>
+    <script src="#{resource['assets/vendors/bootstrap-daterangepicker/daterangepicker.js']}"></script>
+    <script src="#{resource['assets/build/js/custom.min.js']}"></script>   
+    </h:body>
+</html>
+

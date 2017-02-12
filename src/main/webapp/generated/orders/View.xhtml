@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="OrdersViewDlg" widgetVar="OrdersViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewOrdersTitle}">
+            <h:form id="OrdersViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{ordersController.selected != null}">
+                        <h:outputText value="#{bundle.ViewOrdersLabel_orderId}"/>
+                        <h:outputText value="#{ordersController.selected.orderId}" title="#{bundle.ViewOrdersTitle_orderId}"/>
+                        <h:outputText value="#{bundle.ViewOrdersLabel_loggingTime}"/>
+                        <h:outputText value="#{ordersController.selected.loggingTime}" title="#{bundle.ViewOrdersTitle_loggingTime}">
+                            <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewOrdersLabel_orderComment}"/>
+                        <h:outputText value="#{ordersController.selected.orderComment}" title="#{bundle.ViewOrdersTitle_orderComment}"/>
+                        <h:outputText value="#{bundle.ViewOrdersLabel_site}"/>
+                        <h:outputText value="#{ordersController.selected.site}" title="#{bundle.ViewOrdersTitle_site}"/>
+                        <h:outputText value="#{bundle.ViewOrdersLabel_siteLog}"/>
+                        <h:outputText value="#{ordersController.selected.siteLog}" title="#{bundle.ViewOrdersTitle_siteLog}"/>
+                        <h:outputText value="#{bundle.ViewOrdersLabel_actionDate}"/>
+                        <h:outputText value="#{ordersController.selected.actionDate}" title="#{bundle.ViewOrdersTitle_actionDate}">
+                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewOrdersLabel_engineer}"/>
+                        <h:outputText value="#{ordersController.selected.engineer}" title="#{bundle.ViewOrdersTitle_engineer}"/>
+                        <h:outputText value="#{bundle.ViewOrdersLabel_orderStatus}"/>
+                        <h:outputText value="#{ordersController.selected.orderStatus}" title="#{bundle.ViewOrdersTitle_orderStatus}"/>
+                        <h:outputText value="#{bundle.ViewOrdersLabel_orderType}"/>
+                        <h:outputText value="#{ordersController.selected.orderType}" title="#{bundle.ViewOrdersTitle_orderType}"/>
+                        <h:outputText value="#{bundle.ViewOrdersLabel_project}"/>
+                        <h:outputText value="#{ordersController.selected.project}" title="#{bundle.ViewOrdersTitle_project}"/>
+                        <h:outputText value="#{bundle.ViewOrdersLabel_region}"/>
+                        <h:outputText value="#{ordersController.selected.region}" title="#{bundle.ViewOrdersTitle_region}"/>
+                        <h:outputText value="#{bundle.ViewOrdersLabel_createdBy}"/>
+                        <h:outputText value="#{ordersController.selected.createdBy}" title="#{bundle.ViewOrdersTitle_createdBy}"/>
+                        <h:outputText value="#{bundle.ViewOrdersLabel_fromWarehouse}"/>
+                        <h:outputText value="#{ordersController.selected.fromWarehouse}" title="#{bundle.ViewOrdersTitle_fromWarehouse}"/>
+                        <h:outputText value="#{bundle.ViewOrdersLabel_toWarehouse}"/>
+                        <h:outputText value="#{ordersController.selected.toWarehouse}" title="#{bundle.ViewOrdersTitle_toWarehouse}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="OrdersViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

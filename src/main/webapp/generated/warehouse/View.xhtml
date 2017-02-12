@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="WarehouseViewDlg" widgetVar="WarehouseViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewWarehouseTitle}">
+            <h:form id="WarehouseViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{warehouseController.selected != null}">
+                        <h:outputText value="#{bundle.ViewWarehouseLabel_id}"/>
+                        <h:outputText value="#{warehouseController.selected.id}" title="#{bundle.ViewWarehouseTitle_id}"/>
+                        <h:outputText value="#{bundle.ViewWarehouseLabel_warehouseName}"/>
+                        <h:outputText value="#{warehouseController.selected.warehouseName}" title="#{bundle.ViewWarehouseTitle_warehouseName}"/>
+                        <h:outputText value="#{bundle.ViewWarehouseLabel_mainOffice}"/>
+                        <h:outputText value="#{warehouseController.selected.mainOffice}" title="#{bundle.ViewWarehouseTitle_mainOffice}"/>
+                        <h:outputText value="#{bundle.ViewWarehouseLabel_main}"/>
+                        <p:selectBooleanCheckbox value="#{warehouseController.selected.main}" disabled="true"/>
+                        <h:outputText value="#{bundle.ViewWarehouseLabel_actionDateValidation}"/>
+                        <h:outputText value="#{warehouseController.selected.actionDateValidation}" title="#{bundle.ViewWarehouseTitle_actionDateValidation}">
+                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewWarehouseLabel_warehouseProject}"/>
+                        <h:outputText value="#{warehouseController.selected.warehouseProject}" title="#{bundle.ViewWarehouseTitle_warehouseProject}"/>
+                        <h:outputText value="#{bundle.ViewWarehouseLabel_warehouseRegion}"/>
+                        <h:outputText value="#{warehouseController.selected.warehouseRegion}" title="#{bundle.ViewWarehouseTitle_warehouseRegion}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="WarehouseViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>
