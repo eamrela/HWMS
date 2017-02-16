@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ProjectCreateDlg" widgetVar="ProjectCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateProjectTitle}">
+            <h:form id="ProjectCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{projectController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateProjectLabel_projectName}" for="projectName" />
+                        <p:inputText id="projectName" value="#{projectController.selected.projectName}" title="#{bundle.CreateProjectTitle_projectName}" required="true" requiredMessage="#{bundle.CreateProjectRequiredMessage_projectName}"/>
+                        <p:outputLabel value="#{bundle.CreateProjectLabel_projectDescription}" for="projectDescription" />
+                        <p:inputText id="projectDescription" value="#{projectController.selected.projectDescription}" title="#{bundle.CreateProjectTitle_projectDescription}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{projectController.create}" value="#{bundle.Save}" update="display,:ProjectListForm:datalist,:growl" oncomplete="handleSubmit(args,'ProjectCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="ProjectCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

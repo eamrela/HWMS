@@ -6,6 +6,7 @@ import com.huawei.wms.ii.controller.util.JsfUtil.PersistAction;
 import com.huawei.wms.ii.beans.WarehouseFacade;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -30,6 +31,7 @@ public class WarehouseController implements Serializable {
     private List<Warehouse> itemsForUser = null;
     private List<Warehouse> itemsForProject = null;
     private Warehouse selected;
+    private List<Warehouse> selectedWarehouses;
     
     @Inject
     private UsersController userController;
@@ -41,6 +43,18 @@ public class WarehouseController implements Serializable {
         return selected;
     }
 
+    public List<Warehouse> getSelectedWarehouses() {
+        return selectedWarehouses;
+    }
+
+    public void setSelectedWarehouses(List<Warehouse> selectedWarehouses) {
+        this.selectedWarehouses = selectedWarehouses;
+        if(!selectedWarehouses.isEmpty()){
+            setSelected(selectedWarehouses.get(0));
+        }
+    }
+
+    
     public void setSelected(Warehouse selected) {
         this.selected = selected;
     }
@@ -83,6 +97,7 @@ public class WarehouseController implements Serializable {
             items = null;    // Invalidate list of items to trigger re-query.
             itemsForUser = null;
             itemsForProject = null;
+            selectedWarehouses = null;
         }
     }
 
@@ -199,4 +214,14 @@ public class WarehouseController implements Serializable {
 
     }
 
+    public void updateAll(){
+        if(selected!=null){
+            Date actionDate = selected.getActionDateValidation();
+            for (int i = 0; i < selectedWarehouses.size(); i++) {
+                selectedWarehouses.get(i).setActionDateValidation(actionDate);
+                setSelected(selectedWarehouses.get(i));
+                update();
+            }
+        }
+    }
 }

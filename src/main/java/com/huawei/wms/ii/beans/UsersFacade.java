@@ -6,6 +6,7 @@
 package com.huawei.wms.ii.beans;
 
 import com.huawei.wms.ii.entities.Users;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,6 +28,14 @@ public class UsersFacade extends AbstractFacade<Users> {
 
     public UsersFacade() {
         super(Users.class);
+    }
+
+    public Users findByName(String name) {
+        List<Users> result = em.createNativeQuery("select * from users where user_name = '"+name+"' ",Users.class).getResultList();
+        if(result.size()>0){
+            return result.get(0);
+        }
+        return null;
     }
     
 }

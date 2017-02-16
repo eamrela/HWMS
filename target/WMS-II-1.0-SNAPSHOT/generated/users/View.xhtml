@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="UsersViewDlg" widgetVar="UsersViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewUsersTitle}">
+            <h:form id="UsersViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{usersController.selected != null}">
+                        <h:outputText value="#{bundle.ViewUsersLabel_id}"/>
+                        <h:outputText value="#{usersController.selected.id}" title="#{bundle.ViewUsersTitle_id}"/>
+                        <h:outputText value="#{bundle.ViewUsersLabel_userName}"/>
+                        <h:outputText value="#{usersController.selected.userName}" title="#{bundle.ViewUsersTitle_userName}"/>
+                        <h:outputText value="#{bundle.ViewUsersLabel_emailAddress}"/>
+                        <h:outputText value="#{usersController.selected.emailAddress}" title="#{bundle.ViewUsersTitle_emailAddress}"/>
+                        <h:outputText value="#{bundle.ViewUsersLabel_passWord}"/>
+                        <h:outputText value="#{usersController.selected.passWord}" title="#{bundle.ViewUsersTitle_passWord}"/>
+                        <h:outputText value="#{bundle.ViewUsersLabel_title}"/>
+                        <h:outputText value="#{usersController.selected.title}" title="#{bundle.ViewUsersTitle_title}"/>
+                        <h:outputText value="#{bundle.ViewUsersLabel_role}"/>
+                        <h:outputText value="#{usersController.selected.role}" title="#{bundle.ViewUsersTitle_role}"/>
+                        <h:outputText value="#{bundle.ViewUsersLabel_enabled}"/>
+                        <p:selectBooleanCheckbox value="#{usersController.selected.enabled}" disabled="true"/>
+                        <h:outputText value="#{bundle.ViewUsersLabel_project}"/>
+                        <h:outputText value="#{usersController.selected.project}" title="#{bundle.ViewUsersTitle_project}"/>
+                        <h:outputText value="#{bundle.ViewUsersLabel_region}"/>
+                        <h:outputText value="#{usersController.selected.region}" title="#{bundle.ViewUsersTitle_region}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="UsersViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="OrdersEditDlg" widgetVar="OrdersEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditOrdersTitle}">
+            <h:form id="OrdersEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{ordersController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditOrdersLabel_orderId}" for="orderId" />
+                        <p:inputText id="orderId" value="#{ordersController.selected.orderId}" title="#{bundle.EditOrdersTitle_orderId}" required="true" requiredMessage="#{bundle.EditOrdersRequiredMessage_orderId}"/>
+                        <p:outputLabel value="#{bundle.EditOrdersLabel_loggingTime}" for="loggingTime" />
+                        <p:calendar id="loggingTime" pattern="MM/dd/yyyy HH:mm:ss" value="#{ordersController.selected.loggingTime}" title="#{bundle.EditOrdersTitle_loggingTime}"  showOn="button"/>
+                        <p:outputLabel value="#{bundle.EditOrdersLabel_orderComment}" for="orderComment" />
+                        <p:inputText id="orderComment" value="#{ordersController.selected.orderComment}" title="#{bundle.EditOrdersTitle_orderComment}" />
+                        <p:outputLabel value="#{bundle.EditOrdersLabel_site}" for="site" />
+                        <p:inputText id="site" value="#{ordersController.selected.site}" title="#{bundle.EditOrdersTitle_site}" />
+                        <p:outputLabel value="#{bundle.EditOrdersLabel_siteLog}" for="siteLog" />
+                        <p:inputText id="siteLog" value="#{ordersController.selected.siteLog}" title="#{bundle.EditOrdersTitle_siteLog}" />
+                        <p:outputLabel value="#{bundle.EditOrdersLabel_actionDate}" for="actionDate" />
+                        <p:calendar id="actionDate" pattern="MM/dd/yyyy" value="#{ordersController.selected.actionDate}" title="#{bundle.EditOrdersTitle_actionDate}"  showOn="button"/>
+                        <p:outputLabel value="#{bundle.EditOrdersLabel_engineer}" for="engineer" />
+                        <p:selectOneMenu id="engineer" value="#{ordersController.selected.engineer}" required="true" requiredMessage="#{bundle.EditOrdersRequiredMessage_engineer}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{engineersController.itemsAvailableSelectOne}"
+                                           var="engineerItem"
+                                           itemValue="#{engineerItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditOrdersLabel_orderStatus}" for="orderStatus" />
+                        <p:selectOneMenu id="orderStatus" value="#{ordersController.selected.orderStatus}" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{orderStatusController.itemsAvailableSelectOne}"
+                                           var="orderStatusItem"
+                                           itemValue="#{orderStatusItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditOrdersLabel_orderType}" for="orderType" />
+                        <p:selectOneMenu id="orderType" value="#{ordersController.selected.orderType}" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{orderTypeController.itemsAvailableSelectOne}"
+                                           var="orderTypeItem"
+                                           itemValue="#{orderTypeItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditOrdersLabel_project}" for="project" />
+                        <p:selectOneMenu id="project" value="#{ordersController.selected.project}" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{projectController.itemsAvailableSelectOne}"
+                                           var="projectItem"
+                                           itemValue="#{projectItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditOrdersLabel_region}" for="region" />
+                        <p:selectOneMenu id="region" value="#{ordersController.selected.region}" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{regionController.itemsAvailableSelectOne}"
+                                           var="regionItem"
+                                           itemValue="#{regionItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditOrdersLabel_createdBy}" for="createdBy" />
+                        <p:selectOneMenu id="createdBy" value="#{ordersController.selected.createdBy}" required="true" requiredMessage="#{bundle.EditOrdersRequiredMessage_createdBy}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{usersController.itemsAvailableSelectOne}"
+                                           var="createdByItem"
+                                           itemValue="#{createdByItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditOrdersLabel_fromWarehouse}" for="fromWarehouse" />
+                        <p:selectOneMenu id="fromWarehouse" value="#{ordersController.selected.fromWarehouse}" required="true" requiredMessage="#{bundle.EditOrdersRequiredMessage_fromWarehouse}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{warehouseController.itemsAvailableSelectOne}"
+                                           var="fromWarehouseItem"
+                                           itemValue="#{fromWarehouseItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditOrdersLabel_toWarehouse}" for="toWarehouse" />
+                        <p:selectOneMenu id="toWarehouse" value="#{ordersController.selected.toWarehouse}" required="true" requiredMessage="#{bundle.EditOrdersRequiredMessage_toWarehouse}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{warehouseController.itemsAvailableSelectOne}"
+                                           var="toWarehouseItem"
+                                           itemValue="#{toWarehouseItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{ordersController.update}" value="#{bundle.Save}" update="display,:OrdersListForm:datalist,:growl" oncomplete="handleSubmit(args, 'OrdersEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="OrdersEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

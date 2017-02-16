@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="WarehouseLogViewDlg" widgetVar="WarehouseLogViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewWarehouseLogTitle}">
+            <h:form id="WarehouseLogViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{warehouseLogController.selected != null}">
+                        <h:outputText value="#{bundle.ViewWarehouseLogLabel_id}"/>
+                        <h:outputText value="#{warehouseLogController.selected.id}" title="#{bundle.ViewWarehouseLogTitle_id}"/>
+                        <h:outputText value="#{bundle.ViewWarehouseLogLabel_logComment}"/>
+                        <h:outputText value="#{warehouseLogController.selected.logComment}" title="#{bundle.ViewWarehouseLogTitle_logComment}"/>
+                        <h:outputText value="#{bundle.ViewWarehouseLogLabel_previousQty}"/>
+                        <h:outputText value="#{warehouseLogController.selected.previousQty}" title="#{bundle.ViewWarehouseLogTitle_previousQty}"/>
+                        <h:outputText value="#{bundle.ViewWarehouseLogLabel_currentQty}"/>
+                        <h:outputText value="#{warehouseLogController.selected.currentQty}" title="#{bundle.ViewWarehouseLogTitle_currentQty}"/>
+                        <h:outputText value="#{bundle.ViewWarehouseLogLabel_actionType}"/>
+                        <h:outputText value="#{warehouseLogController.selected.actionType}" title="#{bundle.ViewWarehouseLogTitle_actionType}"/>
+                        <h:outputText value="#{bundle.ViewWarehouseLogLabel_actionBy}"/>
+                        <h:outputText value="#{warehouseLogController.selected.actionBy}" title="#{bundle.ViewWarehouseLogTitle_actionBy}"/>
+                        <h:outputText value="#{bundle.ViewWarehouseLogLabel_warehouseId}"/>
+                        <h:outputText value="#{warehouseLogController.selected.warehouseId}" title="#{bundle.ViewWarehouseLogTitle_warehouseId}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="WarehouseLogViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

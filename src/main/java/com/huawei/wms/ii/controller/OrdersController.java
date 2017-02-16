@@ -368,12 +368,14 @@ public class OrdersController implements Serializable {
             issuedItems = new ArrayList<>();
         }
         OrderLineItem lineItem = new OrderLineItem();
+        
         lineItem.setItemId(item);
         lineItem.setOrderId(selected);
         lineItem.setLineItemStatus(orderLineItemStatusController.getOrderLineItemStatus("Pending Approval"));
         
         IssuedItem issuedItem = new IssuedItem();
         issuedItem.setIssued(lineItem);
+        issuedItem.setReturnable(issuedItem.getIssued().getItemId());
         
         issuedItems.add(issuedItem);
         itemsController.setSelected(null);

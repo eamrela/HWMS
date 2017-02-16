@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="OrderLineItemViewDlg" widgetVar="OrderLineItemViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewOrderLineItemTitle}">
+            <h:form id="OrderLineItemViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{orderLineItemController.selected != null}">
+                        <h:outputText value="#{bundle.ViewOrderLineItemLabel_lineItemId}"/>
+                        <h:outputText value="#{orderLineItemController.selected.lineItemId}" title="#{bundle.ViewOrderLineItemTitle_lineItemId}"/>
+                        <h:outputText value="#{bundle.ViewOrderLineItemLabel_qty}"/>
+                        <h:outputText value="#{orderLineItemController.selected.qty}" title="#{bundle.ViewOrderLineItemTitle_qty}"/>
+                        <h:outputText value="#{bundle.ViewOrderLineItemLabel_lineItemComment}"/>
+                        <h:outputText value="#{orderLineItemController.selected.lineItemComment}" title="#{bundle.ViewOrderLineItemTitle_lineItemComment}"/>
+                        <h:outputText value="#{bundle.ViewOrderLineItemLabel_itemId}"/>
+                        <h:outputText value="#{orderLineItemController.selected.itemId}" title="#{bundle.ViewOrderLineItemTitle_itemId}"/>
+                        <h:outputText value="#{bundle.ViewOrderLineItemLabel_lineItemStatus}"/>
+                        <h:outputText value="#{orderLineItemController.selected.lineItemStatus}" title="#{bundle.ViewOrderLineItemTitle_lineItemStatus}"/>
+                        <h:outputText value="#{bundle.ViewOrderLineItemLabel_orderId}"/>
+                        <h:outputText value="#{orderLineItemController.selected.orderId}" title="#{bundle.ViewOrderLineItemTitle_orderId}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="OrderLineItemViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

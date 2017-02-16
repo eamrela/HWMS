@@ -18,6 +18,8 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Named("usersController")
 @SessionScoped
@@ -38,7 +40,11 @@ public class UsersController implements Serializable {
 
     public Users getLoggedInuser() {
         if(loggedInuser==null){
-            loggedInuser = getFacade().find(Long.valueOf("1"));
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if(auth.getName()!=null){
+               loggedInuser=getUsersByName(auth.getName());
+            }
+            
         }
         return loggedInuser;
     }
@@ -129,6 +135,10 @@ public class UsersController implements Serializable {
 
     public List<Users> getItemsAvailableSelectOne() {
         return getFacade().findAll();
+    }
+
+    private Users getUsersByName(String name) {
+        return getFacade().findByName(name);
     }
 
     @FacesConverter(forClass = Users.class)
