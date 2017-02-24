@@ -32,9 +32,14 @@ public class WarehouseFacade extends AbstractFacade<Warehouse> {
     }
 
     public List<Warehouse> findbyProjectAndRegion(Users loggedInuser) {
+        if(loggedInuser.getRegion()!=null){
         return em.createNativeQuery("select * from warehouse "
                 + " where warehouse_project = '"+loggedInuser.getProject().getProjectName()+"'  "
                         + " and warehouse_region='"+loggedInuser.getRegion().getRegionName()+"' ", Warehouse.class).getResultList();
+        }else{
+        return em.createNativeQuery("select * from warehouse "
+                + " where warehouse_project = '"+loggedInuser.getProject().getProjectName()+"'  ", Warehouse.class).getResultList();
+        }
     }
 
     public List<Warehouse> findbyProject(Users loggedInuser) {

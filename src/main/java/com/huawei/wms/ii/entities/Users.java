@@ -77,6 +77,9 @@ public class Users implements Serializable {
     @JoinColumn(name = "region", referencedColumnName = "region_name")
     @ManyToOne
     private Region region;
+    @JoinColumn(name = "warehouse", referencedColumnName = "id")
+    @ManyToOne
+    private Warehouse warehouse;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdBy")
     private Collection<Orders> ordersCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "addedBy")
@@ -178,6 +181,14 @@ public class Users implements Serializable {
 
     public void setRegion(Region region) {
         this.region = region;
+    }
+
+    public Warehouse getWarehouse() {
+        return warehouse;
+    }
+
+    public void setWarehouse(Warehouse warehouse) {
+        this.warehouse = warehouse;
     }
 
     @XmlTransient

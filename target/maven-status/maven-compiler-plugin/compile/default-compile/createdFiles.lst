@@ -53,6 +53,7 @@ com\huawei\wms\ii\beans\OrderLineItemFacade.class
 com\huawei\wms\ii\controller\OrdersController$OrdersControllerConverter.class
 com\huawei\wms\ii\beans\ItemsFacade.class
 com\huawei\wms\ii\entities\OrderStatus.class
+com\huawei\wms\ii\custom\dashboardController.class
 com\huawei\wms\ii\entities\WarehouseInventoryPK_.class
 com\huawei\wms\ii\entities\OrderLineItem.class
 com\huawei\wms\ii\controller\util\JsfUtil$PersistAction.class

@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="processedRequests" required="true"/>
+        <cc:attribute name="pendingRequests" required="true"/>
+        <cc:attribute name="issuedItems" required="true"/>
+        <cc:attribute name="transferItems" required="true"/>
+        <cc:attribute name="inBoundItems" required="true"/>
+        <cc:attribute name="totalItems" required="true"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <div class="row tile_count">
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                <span class="count_top"><i class="fa fa-user"></i> Processed Requests</span>
+                <div class="count">#{cc.attrs.processedRequests}</div>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                <span class="count_top"><i class="fa fa-clock-o"></i> Pending Requests</span>
+                <div class="count">#{cc.attrs.pendingRequests}</div>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                <span class="count_top"><i class="fa fa-user"></i> Issued Items (OTS)</span>
+                <div class="count green">#{cc.attrs.issuedItems}</div>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                <span class="count_top"><i class="fa fa-user"></i> Transfer Items</span>
+                <div class="count">#{cc.attrs.transferItems}</div>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                <span class="count_top"><i class="fa fa-user"></i> In-Bound Items</span>
+                <div class="count">#{cc.attrs.inBoundItems}</div>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+                <span class="count_top"><i class="fa fa-user"></i> Total Items</span>
+                <div class="count">#{cc.attrs.totalItems}</div>
+            </div>
+        </div>
+    </cc:implementation>
+</html>

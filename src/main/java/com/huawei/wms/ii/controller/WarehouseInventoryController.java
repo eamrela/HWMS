@@ -22,6 +22,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 @Named("warehouseInventoryController")
 @SessionScoped
@@ -30,8 +31,12 @@ public class WarehouseInventoryController implements Serializable {
     @EJB
     private com.huawei.wms.ii.beans.WarehouseInventoryFacade ejbFacade;
     private List<WarehouseInventory> items = null;
+    private List<WarehouseInventory> itemsForUser = null;
     private WarehouseInventory selected;
 
+    @Inject
+    private UsersController userController;
+    
     public WarehouseInventoryController() {
     }
 
@@ -67,6 +72,7 @@ public class WarehouseInventoryController implements Serializable {
         persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("WarehouseInventoryCreated"));
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
+            itemsForUser = null;
         }
     }
 
@@ -79,6 +85,7 @@ public class WarehouseInventoryController implements Serializable {
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
+            itemsForUser = null;
         }
     }
 
@@ -89,6 +96,14 @@ public class WarehouseInventoryController implements Serializable {
         return items;
     }
 
+    public List<WarehouseInventory> getItemsForUser() {
+        if(itemsForUser==null){
+            itemsForUser = getFacade().findByUser(userController.getLoggedInuser());
+        }
+        return itemsForUser;
+    }
+
+    
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
             setEmbeddableKeys();
@@ -129,37 +144,46 @@ public class WarehouseInventoryController implements Serializable {
         return getFacade().findAll();
     }
 
-    public BigInteger findGoodStockQty(Items itemId, Warehouse fromWarehouse) {
-        return getFacade().findGoodQty(itemId,fromWarehouse);
+    public BigInteger findGoodorUsedStockQty(Items itemId, Warehouse fromWarehouse) {
+        return getFacade().findGoodorUsedQty(itemId,fromWarehouse);
     }
 
-    public WarehouseInventory findGoodItem(Warehouse fromWarehouse, Items itemId) {
-        return getFacade().findGoodItem(fromWarehouse,itemId);
+    public WarehouseInventory findGoodOrUsedItem(Warehouse fromWarehouse, Items itemId) {
+        return getFacade().findGoodOrUsedItem(fromWarehouse,itemId);
     }
 
-    public void deductFromSelectedGood(BigInteger qty) {
+    public BigInteger deductFromSelectedGood(BigInteger qty) {
+            BigInteger current = BigInteger.ZERO;
         if(selected!=null){
+            current = selected.getQty();
             selected.setQty(selected.getQty().subtract(qty));
             update();
         }
+            return current;
     }
 
     public WarehouseInventory findWarehouseItem(Warehouse toWarehouse, Items itemId, ItemStatus itemStatus) {
         return getFacade().findItem(toWarehouse,itemId,itemStatus);
     }
 
-    public void addToSelected(BigInteger qty) {
+    public BigInteger addToSelected(BigInteger qty) {
+        BigInteger current = BigInteger.ZERO;
         if(selected!=null){
+            current = selected.getQty();
             selected.setQty(selected.getQty().add(qty));
             update();
         }
+        return current;
     }
 
-    public void subtractFromSelected(BigInteger qty) {
+    public BigInteger subtractFromSelected(BigInteger qty) {
+        BigInteger current = BigInteger.ZERO;
         if(selected!=null){
+            current = selected.getQty();
             selected.setQty(selected.getQty().subtract(qty));
             update();
         }
+        return current;
     }
 
     @FacesConverter(forClass = WarehouseInventory.class)

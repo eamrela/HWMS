@@ -3,8 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:WMS="http://xmlns.jcp.org/jsf/composite/components"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+          
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:head>
         <title>WMS</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
@@ -44,17 +44,38 @@
                       </div>
                 </div>
             <WMS:Notifications/>
+            <h:form id="dashboardForm">
             <div class="right_col" role="main">
-                <WMS:PageTitle largeTxt="Home Page" smallTxt="Executive Summary"/>
+        <!-- top tiles -->
+        <WMS:topTiles processedRequests="#{dashboardController.processedRequests}"
+                      pendingRequests="#{dashboardController.pendingRequests}"
+                      issuedItems="#{dashboardController.issuedItems}"
+                      transferItems="#{dashboardController.transferItems}"
+                      inBoundItems="#{dashboardController.inBoundItems}"
+                      totalItems="#{dashboardController.totalItems}"/>
+          <!-- /top tiles -->
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="dashboard_graph">
+
+                <div class="row x_title">
+                  <div class="col-md-12">
+                    <h3>Consumption Rate <small>Offices issued OTS items</small></h3>
+                  </div>
+                </div>
+                  <WMS:consumptionRateChart/>
+                  <WMS:TopConsumedItems/>
+
                 <div class="clearfix"></div>
-            <div class="row">
-              <div class="col-md-12">
-                
               </div>
             </div>
-               
-            
+
+          </div>
+          <br />
+          
+          
             </div>
+            </h:form>
             <WMS:Footer/>
             </div>
         </div>
@@ -83,6 +104,9 @@
     <script src="#{resource['assets/vendors/moment/min/moment.min.js']}"></script>
     <script src="#{resource['assets/vendors/bootstrap-daterangepicker/daterangepicker.js']}"></script>
     <script src="#{resource['assets/build/js/custom.min.js']}"></script>   
+    
+
+    
     </h:body>
 </html>
 

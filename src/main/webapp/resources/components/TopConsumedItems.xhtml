@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <div class="col-md-3 col-sm-3 col-xs-12 bg-white">
+            <div class="x_title">
+                <h2>Top Issued Items</h2>
+                <div class="clearfix"></div>
+            </div>
+
+
+            <ui:repeat var="topItem" value="#{dashboardController.topIssuedItems}" >
+                <div>
+                    <p>#{topItem[0]}</p>
+                    <div class="">
+                        <div class="progress progress_sm" style="width: 76%;">
+                            <div class="progress-bar bg-green" role="progressbar" data-transitiongoal="#{topItem[1]}"></div>
+                        </div>
+                    </div>
+                </div>
+            </ui:repeat>
+
+        </div>
+    </cc:implementation>
+</html>

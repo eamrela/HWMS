@@ -51,17 +51,65 @@
               <div class="col-md-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <ul class="nav navbar-right panel_toolbox">
-                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                      </li>
-                      
-                    </ul>
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-                    <div class="row">
+                    <h:form>
+                      <div class="row">
+                        <p:dataTable id="transTable"
+                                     var="TransItem" 
+                                     value="#{orderLineItemController.itemsPerUserTransfer}"
+                                     rows="10"
+                                     rowKey="#{TransItem.lineItemId}"
+                                     paginatorPosition="bottom"
+                                     paginator="true">
+                            
+                            <p:column headerText="Project" style="font-size: 9px;">
+                                <h:outputText value="#{TransItem.orderId.project.projectName}" />
+                            </p:column>
+                            <p:column headerText="Region" style="font-size: 9px;" filterBy="#{TransItem.orderId.region.regionName}" filterMatchMode="conatins">
+                                <h:outputText value="#{TransItem.orderId.region.regionName}" />
+                            </p:column>
+                            <p:column headerText="From Office" style="font-size: 9px;"  filterBy="#{TransItem.orderId.fromWarehouse.warehouseName}" filterMatchMode="conatins">
+                                <h:outputText value="#{TransItem.orderId.fromWarehouse.warehouseName}" />
+                            </p:column>
+                            <p:column headerText="To Office" style="font-size: 9px;"  filterBy="#{TransItem.orderId.toWarehouse.warehouseName}" filterMatchMode="conatins">
+                                <h:outputText value="#{TransItem.orderId.toWarehouse.warehouseName}" />
+                            </p:column>
+                            <p:column headerText="BOM" style="font-size: 9px;"  filterBy="#{OTSItem.itemId.huaweiBom}" filterMatchMode="conatins">
+                                <h:outputText value="#{TransItem.itemId.huaweiBom}" />
+                            </p:column>
+                            <p:column headerText="OracleCode" style="font-size: 9px;"  filterBy="#{TransItem.itemId.customerOracleCode}" filterMatchMode="conatins">
+                                <h:outputText value="#{TransItem.itemId.customerOracleCode}" />
+                            </p:column>
+                            <p:column headerText="English Desc." style="font-size: 9px;"  filterBy="#{TransItem.itemId.englishDescription}" filterMatchMode="conatins" >
+                                <h:outputText value="#{TransItem.itemId.englishDescription}" />
+                            </p:column>
+                            <p:column headerText="Arabic Desc." style="font-size: 9px;" >
+                                <h:outputText value="#{TransItem.itemId.arabicDescription}" />
+                            </p:column>
+                            <p:column headerText="Supplier" style="font-size: 9px;"  filterBy="#{TransItem.itemId.supplier}" filterMatchMode="conatins"  >
+                                <h:outputText value="#{TransItem.itemId.supplier}" />
+                            </p:column>
+                            <p:column headerText="Qty" style="font-size: 9px;"  >
+                                <h:outputText value="#{TransItem.qty}" />
+                            </p:column>
+                            <p:column headerText="Transfer Date" style="font-size: 9px;" >
+                                <h:outputText value="#{TransItem.orderId.loggingTime}" >
+                                    <f:convertDateTime pattern="yyyy-MM-dd"/>
+                                </h:outputText>
+                            </p:column>
+                            
+                            <f:facet name="footer">
+                                <h:commandLink>
+                                <img src="csv.png" alt=""/>
+                                <p:dataExporter type="csv" target="transTable" fileName="Transfer_Report" />
+                                </h:commandLink>
+                            </f:facet>
                         
+                        </p:dataTable>
                     </div>
+                      </h:form>
                   </div>
                 </div>
               </div>

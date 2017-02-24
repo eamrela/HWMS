@@ -12,29 +12,29 @@
         
         
          <navigation-rule>
-            <from-view-id>/app/orders/create_order_in_bound.xhtml</from-view-id>
+            <from-view-id>/app/whm/create_order_in_bound.xhtml</from-view-id>
             <navigation-case>
             <from-action>#{ordersController.prepareCreateInBound}</from-action>
             <from-outcome>com.huawei.wms.ii.entities.Orders[ orderId=null ]</from-outcome>
-            <to-view-id>/app/orders/create_order_in_bound.xhtml</to-view-id>
+            <to-view-id>/app/whm/create_order_in_bound.xhtml</to-view-id>
           </navigation-case>
         </navigation-rule>
         
          <navigation-rule>
-            <from-view-id>/app/orders/create_order_transfer.xhtml</from-view-id>
+            <from-view-id>/app/wha/create_order_transfer.xhtml</from-view-id>
             <navigation-case>
             <from-action>#{ordersController.prepareCreateTransfer}</from-action>
             <from-outcome>com.huawei.wms.ii.entities.Orders[ orderId=null ]</from-outcome>
-            <to-view-id>/app/orders/create_order_transfer.xhtml</to-view-id>
+            <to-view-id>/app/wha/create_order_transfer.xhtml</to-view-id>
           </navigation-case>
         </navigation-rule>
         
         <navigation-rule>
-            <from-view-id>/app/orders/create_order_issue.xhtml</from-view-id>
+            <from-view-id>/app/wha/create_order_issue.xhtml</from-view-id>
             <navigation-case>
             <from-action>#{ordersController.prepareCreateIssue}</from-action>
             <from-outcome>com.huawei.wms.ii.entities.Orders[ orderId=null ]</from-outcome>
-            <to-view-id>/app/orders/create_order_issue.xhtml</to-view-id>
+            <to-view-id>/app/wha/create_order_issue.xhtml</to-view-id>
           </navigation-case>
         </navigation-rule>
         

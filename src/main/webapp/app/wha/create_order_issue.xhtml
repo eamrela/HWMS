@@ -91,19 +91,9 @@
                             <div class="col-md-6">
                             <div class="form-group">
                             <label class="control-label" for="orderFromWarehouse">From Warehouse</label>
-                            <h:selectOneMenu id="orderFromWarehouse"
-                                             value="#{ordersController.selected.fromWarehouse}"
-                                             converter="WarehouseControllerConverter"
-                                             styleClass="form-control"
-                                             required="true"
-                                             requiredMessage="Warehouse can't be empty">
-                                <p:ajax update=":createInBoundForm:actionDateValidation"/>
-                                <f:selectItem itemLabel="" itemValue="#{null}"/>
-                                <f:selectItems value="#{warehouseController.itemsForUser}" 
-                                               var="warehouseItem"
-                                               itemValue="#{warehouseItem}"
-                                               itemLabel="#{warehouseItem.warehouseName}"/>
-                            </h:selectOneMenu>
+                            <h:outputText id="orderFromWarehouse"
+                                          value="#{ordersController.selected.fromWarehouse.warehouseName}"
+                                             styleClass="form-control"/>
                             </div>
                             </div>
                             <div class="col-md-6">
@@ -124,13 +114,17 @@
                             </h:selectOneMenu>
                             </div>
                             </div>
+                        </div>
+                        <div class="row">    
                             <div class="col-md-6">
                             <div class="form-group">
                             <label class="control-label" for="orderSite">Site</label>
                             <h:inputText class="form-control" id="orderSite"
                                          value="#{ordersController.selected.site}" 
                                          required="true"
-                                         requiredMessage="Site can't be empty"/>
+                                         requiredMessage="Site can't be empty">
+                                <p:ajax />
+                            </h:inputText>
                             </div>
                             </div>
                             <div class="col-md-6">
@@ -162,7 +156,9 @@
                             <label class="control-label" for="orderSiteLog">Site Log</label>
                             <h:inputText id="orderSiteLog"  
                                              value="#{ordersController.selected.siteLog}" 
-                                             class="form-control"/>
+                                             class="form-control">
+                                <p:ajax />
+                            </h:inputText>
                             </div>
                         </div> 
                         </div>
@@ -250,7 +246,7 @@
                         <h:outputText value="#{lineItem.issued.orderId.fromWarehouse.warehouseName}" />
                     </p:column>
                     <p:column headerText="Good QTY" style="font-size: 9px;">
-                        <h:outputText value="#{ordersController.getGoodStockQty(lineItem.issued)}" />
+                        <h:outputText value="#{ordersController.getGoodOrUsedStockQty(lineItem.issued)}" />
                     </p:column>
                     
                     <p:column headerText="BOM" style="font-size: 9px;">

@@ -51,17 +51,71 @@
               <div class="col-md-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <ul class="nav navbar-right panel_toolbox">
-                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                      </li>
-                      
-                    </ul>
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-                    <div class="row">
+                     <h:form>
+                      <div class="row">
+                        <p:dataTable id="otsTable"
+                                     var="OTSItem" 
+                                     value="#{orderLineItemController.itemsPerUser}"
+                                     rows="10"
+                                     rowKey="#{OTSItem.lineItemId}"
+                                     paginatorPosition="bottom"
+                                     paginator="true">
+                            
+                            <p:column headerText="Project" style="font-size: 9px;">
+                                <h:outputText value="#{OTSItem.orderId.project.projectName}" />
+                            </p:column>
+                            <p:column headerText="Region" style="font-size: 9px;" filterBy="#{OTSItem.orderId.region.regionName}" filterMatchMode="conatins">
+                                <h:outputText value="#{OTSItem.orderId.region.regionName}" />
+                            </p:column>
+                            <p:column headerText="Office" style="font-size: 9px;"  filterBy="#{OTSItem.orderId.fromWarehouse.warehouseName}" filterMatchMode="conatins">
+                                <h:outputText value="#{OTSItem.orderId.fromWarehouse.warehouseName}" />
+                            </p:column>
+                            <p:column headerText="BOM" style="font-size: 9px;"  filterBy="#{OTSItem.itemId.huaweiBom}" filterMatchMode="conatins">
+                                <h:outputText value="#{OTSItem.itemId.huaweiBom}" />
+                            </p:column>
+                            <p:column headerText="OracleCode" style="font-size: 9px;"  filterBy="#{OTSItem.itemId.customerOracleCode}" filterMatchMode="conatins">
+                                <h:outputText value="#{OTSItem.itemId.customerOracleCode}" />
+                            </p:column>
+                            <p:column headerText="English Desc." style="font-size: 9px;"  filterBy="#{OTSItem.itemId.englishDescription}" filterMatchMode="conatins" >
+                                <h:outputText value="#{OTSItem.itemId.englishDescription}" />
+                            </p:column>
+                            <p:column headerText="Arabic Desc." style="font-size: 9px;" >
+                                <h:outputText value="#{OTSItem.itemId.arabicDescription}" />
+                            </p:column>
+                            <p:column headerText="Supplier" style="font-size: 9px;"  filterBy="#{OTSItem.itemId.supplier}" filterMatchMode="conatins"  >
+                                <h:outputText value="#{OTSItem.itemId.supplier}" />
+                            </p:column>
+                            <p:column headerText="SiteName" style="font-size: 9px;"  filterBy="#{OTSItem.orderId.site}" filterMatchMode="conatins" >
+                                <h:outputText value="#{OTSItem.orderId.site}" />
+                            </p:column>
+                            <p:column headerText="SiteCode" style="font-size: 9px;" filterBy="#{OTSItem.orderId.site}" filterMatchMode="conatins">
+                                <h:outputText value="#{OTSItem.orderId.site}" />
+                            </p:column>
+                            <p:column headerText="Engineer Name" style="font-size: 9px;" filterBy="#{OTSItem.orderId.engineer}" filterMatchMode="conatins" >
+                                <h:outputText value="#{OTSItem.orderId.engineer.fullName}" />
+                            </p:column>
+                            <p:column headerText="Qty Used" style="font-size: 9px;"  >
+                                <h:outputText value="#{OTSItem.qty}" />
+                            </p:column>
+                            <p:column headerText="Action Date" style="font-size: 9px;" >
+                                <h:outputText value="#{OTSItem.orderId.actionDate}" >
+                                    <f:convertDateTime pattern="yyyy-MM-dd"/>
+                                </h:outputText>
+                            </p:column>
+                            
+                            <f:facet name="footer">
+                                <h:commandLink>
+                                <img src="csv.png" alt=""/>
+                                <p:dataExporter type="csv" target="otsTable" fileName="OTS_Report" />
+                                </h:commandLink>
+                            </f:facet>
                         
+                        </p:dataTable>
                     </div>
+                      </h:form>
                   </div>
                 </div>
               </div>

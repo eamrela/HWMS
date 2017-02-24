@@ -18,6 +18,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 @Named("orderLineItemController")
 @SessionScoped
@@ -26,8 +27,12 @@ public class OrderLineItemController implements Serializable {
     @EJB
     private com.huawei.wms.ii.beans.OrderLineItemFacade ejbFacade;
     private List<OrderLineItem> items = null;
+    private List<OrderLineItem> itemsPerUser = null;
+    private List<OrderLineItem> itemsPerUserTransfer = null;
     private OrderLineItem selected;
 
+    @Inject 
+    private UsersController userController;
     public OrderLineItemController() {
     }
 
@@ -59,6 +64,8 @@ public class OrderLineItemController implements Serializable {
         persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("OrderLineItemCreated"));
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
+            itemsPerUser = null;
+            itemsPerUserTransfer = null;
         }
     }
 
@@ -81,6 +88,22 @@ public class OrderLineItemController implements Serializable {
         return items;
     }
 
+    public List<OrderLineItem> getItemsPerUser() {
+        if(itemsPerUser == null){
+            itemsPerUser = getFacade().findByUser(userController.getLoggedInuser());
+        }
+        return itemsPerUser;
+    }
+
+    public List<OrderLineItem> getItemsPerUserTransfer() {
+        if(itemsPerUserTransfer == null){
+            itemsPerUserTransfer = getFacade().findByUserTransfer(userController.getLoggedInuser());
+        }
+        return itemsPerUserTransfer;
+    }
+
+    
+    
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
             setEmbeddableKeys();

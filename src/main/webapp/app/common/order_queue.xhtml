@@ -67,7 +67,7 @@
                                         selection="#{ordersController.selected}"
                                         selectionMode="single">
                                     
-                            <p:ajax event="rowSelect" update=":ordersQueueForm:orderDetails ,:ordersQueueForm:orderItems"/>
+                            <p:ajax event="rowSelect" update="orderEditableInBound, orderEditableTransfer, orderEditableIssue ,:ordersQueueForm:orderDetails ,:ordersQueueForm:orderItems"/>
                             
                                     <p:column style="font-size: 9px;" headerText="Id">
                                         <h:outputText value="#{orderItem.orderId}" />
@@ -94,6 +94,30 @@
                                           <img src="csv.png" alt=""/>
                                           <p:dataExporter type="csv" target="ordersDatalist" fileName="orders" />
                                       </h:commandLink>
+                                        <h:panelGroup id="orderEditableInBound">
+                                            <p:commandButton id="editButtonInBound"   
+                                                             icon="ui-icon-pencil" 
+                                                             value="Edit In-Bound" 
+                                                             update=":OrdersEditFormInBound" 
+                                                             oncomplete="PF('OrdersEditDialogInBound').show()" 
+                                                             rendered="#{ordersController.selected.createdBy.warehouse eq usersController.loggedInuser.warehouse and ordersController.selected.orderType.typeName=='In-Bound'}"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup id="orderEditableTransfer">
+                                            <p:commandButton id="editButtonTransfer"   
+                                                             icon="ui-icon-pencil" 
+                                                             value="Edit Transfer" 
+                                                             update=":OrdersEditFormTransfer" 
+                                                             oncomplete="PF('OrdersEditDialogTransfer').show()" 
+                                                             rendered="#{ordersController.selected.createdBy.warehouse eq usersController.loggedInuser.warehouse and ordersController.selected.orderType.typeName=='Transfer'}"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup id="orderEditableIssue">
+                                            <p:commandButton id="editButtonIssue"   
+                                                             icon="ui-icon-pencil" 
+                                                             value="Edit OTS" 
+                                                             update=":OrdersEditFormIssue" 
+                                                             oncomplete="PF('OrdersEditDialogIssue').show()" 
+                                                             rendered="#{ordersController.selected.createdBy.warehouse eq usersController.loggedInuser.warehouse and ordersController.selected.orderType.typeName=='Issued Material (OTS)'}"/>
+                                        </h:panelGroup>
                                     </f:facet>
                                 </p:dataTable>
                     </div>
@@ -130,6 +154,11 @@
                         <label class="control-label" for="inRequestToWarehouse" >In-Bound Warehouse</label>
                         <h:outputText class="form-control" id="inRequestToWarehouse" value="#{ordersController.selected.toWarehouse.warehouseName}"/>
                         </div>
+                        <div class="form-group">
+                        <label class="control-label" for="inRequestAssignmentGroup" >Assignment Group</label>
+                        <h:outputText class="form-control" id="inRequestAssignmentGroup" 
+                                      value="#{ordersController.selected.assignmentGroup.warehouseName}"/>
+                        </div>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{ordersController.selected.orderType.typeName=='Transfer'}">
                         <div class="form-group">
@@ -139,6 +168,16 @@
                         <div class="form-group">
                         <label class="control-label" for="transRequestToWarehouse" >To Warehouse</label>
                         <h:outputText class="form-control" id="transRequestToWarehouse" value="#{ordersController.selected.toWarehouse.warehouseName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="transRequestAssignmentGroup" >Assignment Group</label>
+                        <h:selectOneMenu 
+                            value="#{ordersController.selected.assignmentGroup}"
+                            converter="WarehouseControllerConverter"
+                            class="form-control" id="transRequestAssignmentGroup">
+                            <f:selectItem itemValue="#{ordersController.selected.toWarehouse}" itemLabel="#{ordersController.selected.toWarehouse.warehouseName}"/>
+                            <f:selectItem itemValue="#{ordersController.selected.fromWarehouse}" itemLabel="#{ordersController.selected.fromWarehouse.warehouseName}"/>
+                        </h:selectOneMenu>
                         </div>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{ordersController.selected.orderType.typeName=='Issued Material (OTS)'}">
@@ -164,6 +203,11 @@
                             <f:convertDateTime pattern="yyyy-MM-dd"/>
                         </h:outputText>
                         </div>
+                         <div class="form-group">
+                        <label class="control-label" for="otsrRequestAssignmentGroup" >Assignment Group</label>
+                        <h:outputText class="form-control" id="otsrRequestAssignmentGroup" value="#{ordersController.selected.assignmentGroup.warehouseName}"/>
+                        </div>
+                         
                         </h:panelGroup>
                     </div>
                       </h:panelGroup>
@@ -229,6 +273,17 @@
                                                     :ordersQueueForm:ordersDatalist, 
                                                     :ordersQueueForm:growl"/>
                                     </div>
+                                <div class="col-md-12">
+                                     <p:commandButton 
+                                         disabled="#{ordersController.selected==null}"
+                                        id="inSaveBtn" 
+                                        value="Save" 
+                                        class="btn btn-block btn-warning"
+                                        actionListener="#{ordersController.update}"
+                                        update=":ordersQueueForm:inRequestLineItems, 
+                                                    :ordersQueueForm:ordersDatalist, 
+                                                    :ordersQueueForm:growl"/>
+                                </div>
                            </div>
                         </div>
                         </h:panelGroup>
@@ -282,6 +337,17 @@
                                             :ordersQueueForm:ordersDatalist, 
                                             :ordersQueueForm:growl"/>
                             </div>
+                            <div class="col-md-12">
+                                     <p:commandButton 
+                                        disabled="#{ordersController.selected==null}"
+                                        id="transSaveBtn" 
+                                        value="Save" 
+                                        class="btn btn-block btn-warning"
+                                        actionListener="#{ordersController.update}"
+                                        update=":ordersQueueForm:transRequestLineItems, 
+                                            :ordersQueueForm:ordersDatalist, 
+                                            :ordersQueueForm:growl"/>
+                                </div>
                            </div>
                         </div>
                         </h:panelGroup>
@@ -341,6 +407,17 @@
                                             :ordersQueueForm:ordersDatalist, 
                                             :ordersQueueForm:growl"/>
                             </div>
+                                <div class="col-md-12">
+                                     <p:commandButton 
+                                        disabled="#{ordersController.selected==null}"
+                                        id="issueSaveBtn" 
+                                        value="Save" 
+                                        class="btn btn-block btn-warning"
+                                        actionListener="#{ordersController.update}"
+                                        update=":ordersQueueForm:issueRequestLineItems, 
+                                            :ordersQueueForm:ordersDatalist, 
+                                            :ordersQueueForm:growl"/>
+                                </div>
                            </div>
                         </div>
                         </h:panelGroup>
@@ -354,6 +431,232 @@
                 </h:form>
                 
             </div>
+            
+            <p:dialog id="OrdersEditDlgInBound" widgetVar="OrdersEditDialogInBound" modal="true" resizable="false" appendTo="@(body)" header="Edit In-Bound Order">
+            <h:form id="OrdersEditFormInBound">
+                <h:panelGroup rendered="#{ordersController.selected != null}" >
+                <div class="row" style="width: 700px;">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                        <label class="control-label" for="requestCreator" >Creator</label>
+                        <h:outputText class="form-control" id="requestCreator" value="#{ordersController.selected.createdBy.fullName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestProject" >Project</label>
+                        <h:outputText class="form-control" id="requestProject" value="#{ordersController.selected.project.projectName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestRegion" >Region</label>
+                        <h:outputText class="form-control" id="requestRegion" value="#{ordersController.selected.region.regionName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestType" >Order Type</label>
+                        <h:outputText class="form-control" id="requestType" value="#{ordersController.selected.orderType.typeName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestToWarehouse" >In-Bound Warehouse</label>
+                        <h:outputText class="form-control" id="requestToWarehouse" value="#{ordersController.selected.toWarehouse.warehouseName}"/>
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-9">
+                        <p:dataTable var="requestLineItem" 
+                                     id="requestLineItems"
+                                     value="#{ordersController.selected.orderLineItemCollection}"
+                                     rowKey="#{requestLineItem.itemId.huaweiBom}"
+                                     selection="#{orderLineItemController.selected}"
+                                     selectionMode="single">
+                             <p:ajax event="rowDblselect" listener="#{ordersController.removeFromLineItems}" 
+                                    update=":OrdersEditFormInBound:requestLineItems"/>
+                             
+                            <p:column headerText="BOM" style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.itemId.huaweiBom}" />
+                            </p:column>
+                            <p:column headerText="English Des." style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.itemId.englishDescription}" />
+                            </p:column>
+                            <p:column headerText="Arabic Des." style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.itemId.arabicDescription}" />
+                            </p:column>
+                             <p:column headerText="Status" style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.lineItemStatus.statusName}" />
+                            </p:column>
+                            <p:column headerText="QTY" style="font-size: 9px;">
+                                <h:inputText value="#{requestLineItem.qty}" class="form-control"
+                                             disabled="#{requestLineItem.lineItemStatus.statusName=='Accepted'}"/>
+                            </p:column>
+                        </p:dataTable>
+                        
+                        <p:commandButton 
+                            actionListener="#{ordersController.handleReassignInBound}" 
+                            class="btn btn-block btn-success"
+                            value="CONFIRM AND REASSIGN IN-BOUND ORDER" 
+                            update=":ordersQueueForm:growl" 
+                            oncomplete="handleSubmit(args,'OrdersEditDialogInBound');"/>
+                    </div>
+                </div>  
+                </h:panelGroup>
+            </h:form>
+            </p:dialog>
+            
+            <p:dialog id="OrdersEditDlgTransfer" widgetVar="OrdersEditDialogTransfer" modal="true" resizable="false" appendTo="@(body)" header="Edit Transfer Order">
+            <h:form id="OrdersEditFormTransfer">
+                <h:panelGroup rendered="#{ordersController.selected != null}" >
+                <div class="row" style="width: 700px;">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                        <label class="control-label" for="requestCreator" >Creator</label>
+                        <h:outputText class="form-control" id="requestCreator" value="#{ordersController.selected.createdBy.fullName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestProject" >Project</label>
+                        <h:outputText class="form-control" id="requestProject" value="#{ordersController.selected.project.projectName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestRegion" >Region</label>
+                        <h:outputText class="form-control" id="requestRegion" value="#{ordersController.selected.region.regionName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestType" >Order Type</label>
+                        <h:outputText class="form-control" id="requestType" value="#{ordersController.selected.orderType.typeName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestFromWarehouse" >From Warehouse</label>
+                        <h:outputText class="form-control" id="requestFromWarehouse" value="#{ordersController.selected.fromWarehouse.warehouseName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestToWarehouse" >To Warehouse</label>
+                        <h:outputText class="form-control" id="requestToWarehouse" value="#{ordersController.selected.toWarehouse.warehouseName}"/>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <p:dataTable var="requestLineItem" 
+                                     id="requestLineItems"
+                                     value="#{ordersController.selected.orderLineItemCollection}"
+                                     rowKey="#{requestLineItem.itemId.huaweiBom}"
+                                     selection="#{orderLineItemController.selected}"
+                                     selectionMode="single">
+                            
+                            <p:ajax event="rowDblselect" listener="#{ordersController.removeFromLineItems}" 
+                                    update=":OrdersEditFormTransfer:requestLineItems"/>
+                            
+                            <p:column headerText="BOM" style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.itemId.huaweiBom}" />
+                            </p:column>
+                            <p:column headerText="English Des." style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.itemId.englishDescription}" />
+                            </p:column>
+                            <p:column headerText="Arabic Des." style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.itemId.arabicDescription}" />
+                            </p:column>
+                            <p:column headerText="Status" style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.lineItemStatus.statusName}" />
+                            </p:column>
+                            <p:column headerText="QTY" style="font-size: 9px;">
+                                <h:inputText value="#{requestLineItem.qty}" class="form-control" 
+                                             disabled="#{requestLineItem.lineItemStatus.statusName=='Accepted'}"/>
+                            </p:column>
+                        </p:dataTable>
+                        
+                        <p:commandButton 
+                            actionListener="#{ordersController.handleReassignTransfer}" 
+                            class="btn btn-block btn-success"
+                            value="CONFIRM AND REASSIGN TRANSFER ORDER" 
+                            update=":ordersQueueForm:growl" 
+                            oncomplete="handleSubmit(args,'OrdersEditDialogTransfer');"/>
+                    </div>
+                </div>  
+                </h:panelGroup>
+            </h:form>
+            </p:dialog>
+            
+            <p:dialog id="OrdersEditDlgIssue" widgetVar="OrdersEditDialogIssue" modal="true" resizable="false" appendTo="@(body)" header="Edit OTS Order">
+            <h:form id="OrdersEditFormIssue">
+                <h:panelGroup rendered="#{ordersController.selected != null}" >
+                <div class="row" style="width: 700px;">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                        <label class="control-label" for="requestCreator" >Creator</label>
+                        <h:outputText class="form-control" id="requestCreator" value="#{ordersController.selected.createdBy.fullName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestProject" >Project</label>
+                        <h:outputText class="form-control" id="requestProject" value="#{ordersController.selected.project.projectName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestRegion" >Region</label>
+                        <h:outputText class="form-control" id="requestRegion" value="#{ordersController.selected.region.regionName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestType" >Order Type</label>
+                        <h:outputText class="form-control" id="requestType" value="#{ordersController.selected.orderType.typeName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestFromWarehouse" >From Warehouse</label>
+                        <h:outputText class="form-control" id="requestFromWarehouse" value="#{ordersController.selected.fromWarehouse.warehouseName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestEngineer" >Engineer</label>
+                        <h:outputText class="form-control" id="requestEngineer" value="#{ordersController.selected.engineer.fullName}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestSite" >Site</label>
+                        <h:outputText class="form-control" id="requestSite" value="#{ordersController.selected.site}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestSiteLog" >Site Log</label>
+                        <h:outputText class="form-control" id="requestSiteLog" value="#{ordersController.selected.siteLog}"/>
+                        </div>
+                        <div class="form-group">
+                        <label class="control-label" for="requestActionDate" >Action Date</label>
+                        <h:outputText class="form-control" id="requestActionDate" value="#{ordersController.selected.actionDate}">
+                            <f:convertDateTime pattern="yyyy-MM-dd"/>
+                        </h:outputText>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <p:dataTable var="requestLineItem" 
+                                     id="requestLineItems"
+                                     value="#{ordersController.selected.orderLineItemCollection}"
+                                     rowKey="#{requestLineItem.itemId.huaweiBom}"
+                                     selection="#{orderLineItemController.selected}"
+                                     selectionMode="single">
+                             <p:ajax event="rowDblselect" listener="#{ordersController.removeFromLineItems}" 
+                                    update=":OrdersEditFormIssue:requestLineItems"/>
+                             
+                            <p:column headerText="BOM" style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.itemId.huaweiBom}" />
+                            </p:column>
+                            <p:column headerText="English Des." style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.itemId.englishDescription}" />
+                            </p:column>
+                            <p:column headerText="Arabic Des." style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.itemId.arabicDescription}" />
+                            </p:column>
+                            <p:column headerText="QTY" style="font-size: 9px;">
+                                 <h:inputText value="#{requestLineItem.qty}" class="form-control" 
+                                             disabled="#{requestLineItem.lineItemStatus.statusName=='Accepted'}"/>
+                            </p:column>
+                            <p:column headerText="Returnable" style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.returnable}" />
+                            </p:column>
+                            <p:column headerText="Returnable Status" style="font-size: 9px;">
+                                <h:outputText value="#{requestLineItem.returnableStatus.statusName}" />
+                            </p:column>
+                        </p:dataTable>
+                        
+                        <p:commandButton 
+                            actionListener="#{ordersController.handleReassignIssue}" 
+                            class="btn btn-block btn-success"
+                            value="CONFIRM AND REASSIGN ISSUED MATERIAL(OTS) ORDER" 
+                            update=":ordersQueueForm:growl" 
+                            oncomplete="handleSubmit(args,'OrdersEditDialogIssue');"/>
+                    </div>
+                </div>  
+                </h:panelGroup>
+            </h:form>
+            </p:dialog>
+            
             <WMS:Footer/>
             </div>
         </div>

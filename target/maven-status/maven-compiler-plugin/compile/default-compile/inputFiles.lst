@@ -44,6 +44,7 @@ D:\Work\Netbeans\WMS-II\src\main\java\com\huawei\wms\ii\controller\OrderLogContr
 D:\Work\Netbeans\WMS-II\src\main\java\com\huawei\wms\ii\beans\EngineersFacade.java
 D:\Work\Netbeans\WMS-II\src\main\java\com\huawei\wms\ii\beans\WarehouseLogFacade.java
 D:\Work\Netbeans\WMS-II\src\main\java\com\huawei\wms\ii\controller\OrderStatusController.java
+D:\Work\Netbeans\WMS-II\src\main\java\com\huawei\wms\ii\custom\dashboardController.java
 D:\Work\Netbeans\WMS-II\src\main\java\com\huawei\wms\ii\entities\WarehouseLog.java
 D:\Work\Netbeans\WMS-II\src\main\java\com\huawei\wms\ii\controller\OrderLineItemController.java
 D:\Work\Netbeans\WMS-II\src\main\java\com\huawei\wms\ii\controller\OrderLineItemStatusController.java

@@ -51,17 +51,71 @@
               <div class="col-md-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <ul class="nav navbar-right panel_toolbox">
-                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                      </li>
-                      
-                    </ul>
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-                    <div class="row">
+                      <h:form>
+                      <div class="row">
+                        <p:dataTable id="whTable"
+                                     var="whInventory" 
+                                     value="#{warehouseInventoryController.itemsForUser}"
+                                     rows="10"
+                                     rowKey="#{whInventory.warehouseInventoryPK}"
+                                     paginatorPosition="bottom"
+                                     paginator="true">
+                            
+                            <p:column headerText="Project" style="font-size: 9px;">
+                                <h:outputText value="#{whInventory.warehouse.warehouseProject.projectName}" />
+                            </p:column>
+                            <p:column headerText="Region" style="font-size: 9px;">
+                                <h:outputText value="#{whInventory.warehouse.warehouseRegion.regionName}" />
+                            </p:column>
+                            <p:column headerText="Warehouse" style="font-size: 9px;" filterBy="#{whInventory.warehouse.warehouseName}" filterMatchMode="contains">
+                                <h:outputText value="#{whInventory.warehouse.warehouseName}" />
+                            </p:column>
+                            <p:column headerText="BOM" style="font-size: 9px;" filterBy="#{whInventory.items.huaweiBom}" filterMatchMode="contains">
+                                <h:outputText value="#{whInventory.items.huaweiBom}" />
+                            </p:column>
+                            <p:column headerText="English Desc." style="font-size: 9px;" filterBy="#{whInventory.items.englishDescription}" filterMatchMode="contains">
+                                <h:outputText value="#{whInventory.items.englishDescription}" />
+                            </p:column>
+                            <p:column headerText="Arabic Desc." style="font-size: 9px;" >
+                                <h:outputText value="#{whInventory.items.arabicDescription}" />
+                            </p:column>
+                            <p:column headerText="OracleCode" style="font-size: 9px;" filterBy="#{whInventory.items.customerOracleCode}" filterMatchMode="contains">
+                                <h:outputText value="#{whInventory.items.customerOracleCode}" />
+                            </p:column>
+                            <p:column headerText="OtherCode" style="font-size: 9px;"  filterBy="#{whInventory.items.otherCode}" filterMatchMode="contains">
+                                <h:outputText value="#{whInventory.items.otherCode}" />
+                            </p:column>
+                            <p:column headerText="UOM" style="font-size: 9px;" >
+                                <h:outputText value="#{whInventory.items.unit}" />
+                            </p:column>
+                            <p:column headerText="Brand" style="font-size: 9px;"  filterBy="#{whInventory.items.brand}" filterMatchMode="contains">
+                                <h:outputText value="#{whInventory.items.brand}" />
+                            </p:column>
+                            <p:column headerText="Category" style="font-size: 9px;"  filterBy="#{whInventory.items.itemCategory.categoryName}" filterMatchMode="contains">
+                                <h:outputText value="#{whInventory.items.itemCategory.categoryName}" />
+                            </p:column>
+                            <p:column headerText="Supplier" style="font-size: 9px;"  filterBy="#{whInventory.items.supplier}" filterMatchMode="contains">
+                                <h:outputText value="#{whInventory.items.supplier}" />
+                            </p:column>
+                            <p:column headerText="Status" style="font-size: 9px;"  filterBy="#{whInventory.itemStatus.statusName}" filterMatchMode="contains">
+                                <h:outputText value="#{whInventory.itemStatus.statusName}" />
+                            </p:column>
+                            <p:column headerText="Qty" style="font-size: 9px;" >
+                                <h:outputText value="#{whInventory.qty}" />
+                            </p:column>
+                            <f:facet name="footer">
+                                <h:commandLink>
+                                <img src="csv.png" alt=""/>
+                                <p:dataExporter type="csv" target="whTable" fileName="Inventory" />
+                                </h:commandLink>
+                            </f:facet>
                         
+                        </p:dataTable>
                     </div>
+                      </h:form>
                   </div>
                 </div>
               </div>

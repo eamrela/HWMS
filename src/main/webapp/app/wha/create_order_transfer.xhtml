@@ -91,19 +91,9 @@
                         <div class="col-md-3">
                             <div class="form-group">
                             <label class="control-label" for="orderFromWarehouse">From Warehouse</label>
-                            <h:selectOneMenu id="orderFromWarehouse"
-                                             value="#{ordersController.selected.fromWarehouse}"
-                                             converter="WarehouseControllerConverter"
-                                             styleClass="form-control"
-                                             required="true"
-                                             requiredMessage="Warehouse can't be empty">
-                                <p:ajax update="orderLineItems"/>
-                                <f:selectItem itemLabel="" itemValue="#{null}"/>
-                                <f:selectItems value="#{warehouseController.itemsForUser}" 
-                                               var="warehouseItem"
-                                               itemValue="#{warehouseItem}"
-                                               itemLabel="#{warehouseItem.warehouseName}"/>
-                            </h:selectOneMenu>
+                            <h:outputText id="orderFromWarehouse"
+                                          value="#{ordersController.selected.fromWarehouse.warehouseName}"
+                                             styleClass="form-control"/>
                             </div>
                             <div class="form-group">
                             <label class="control-label" for="orderToWarehouse">To Warehouse</label>
@@ -173,8 +163,8 @@
                             <p:column headerText="WH" style="font-size: 9px;">
                                 <h:outputText value="#{lineItem.orderId.fromWarehouse.warehouseName}" />
                             </p:column>
-                            <p:column headerText="Good QTY" style="font-size: 9px;">
-                                <h:outputText value="#{ordersController.getGoodStockQty(lineItem)}" />
+                            <p:column headerText="Good/Used QTY" style="font-size: 9px;">
+                                <h:outputText value="#{ordersController.getGoodOrUsedStockQty(lineItem)}" />
                             </p:column>
                         </p:dataTable>
                     </div>

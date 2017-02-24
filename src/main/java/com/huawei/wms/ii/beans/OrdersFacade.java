@@ -7,6 +7,7 @@ package com.huawei.wms.ii.beans;
 
 import com.huawei.wms.ii.entities.Orders;
 import com.huawei.wms.ii.entities.Users;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -32,8 +33,27 @@ public class OrdersFacade extends AbstractFacade<Orders> {
     }
 
     public List<Orders> findOrdersByProjectRegionOffice(Users loggedInuser) {
-        return em.createNativeQuery("select * from orders where project='"+loggedInuser.getProject().getProjectName()+"' "
-                + " and region='"+loggedInuser.getRegion().getRegionName()+"' and order_status != 'Accepted' ", Orders.class).getResultList();
+        if(loggedInuser.getRole().contains("WHM")){
+        return em.createNativeQuery("select * from orders "
+                + " where project='"+loggedInuser.getProject().getProjectName()+"' "
+                + " and order_status != 'Accepted' ", Orders.class).getResultList();
+        }else if(loggedInuser.getRole().contains("WHA")){
+        
+            return em.createNativeQuery("select * from orders "
+                + " where project='"+loggedInuser.getProject().getProjectName()+"' "
+                + " and assignment_group="+loggedInuser.getWarehouse().getId()
+                        + " and order_status != 'Accepted' ", Orders.class).getResultList();
+        
+        }else if(loggedInuser.getRole().contains("SYSADMIN")){
+        return em.createNativeQuery("select * from orders "
+                + " where order_status != 'Accepted' ", Orders.class).getResultList();
+        }
+        
+        return new ArrayList<>();
+        }
+
+    public Orders merge(Orders selected) {
+        return em.merge(selected);
     }
     
 }

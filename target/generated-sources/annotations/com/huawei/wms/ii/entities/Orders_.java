@@ -15,7 +15,7 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2017-02-16T12:32:16")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2017-02-24T21:38:05")
 @StaticMetamodel(Orders.class)
 public class Orders_ { 
 
@@ -30,6 +30,7 @@ public class Orders_ {
     public static volatile SingularAttribute<Orders, String> site;
     public static volatile SingularAttribute<Orders, Warehouse> toWarehouse;
     public static volatile SingularAttribute<Orders, Users> createdBy;
+    public static volatile SingularAttribute<Orders, Warehouse> assignmentGroup;
     public static volatile SingularAttribute<Orders, String> siteLog;
     public static volatile SingularAttribute<Orders, Warehouse> fromWarehouse;
     public static volatile CollectionAttribute<Orders, OrderLog> orderLogCollection;

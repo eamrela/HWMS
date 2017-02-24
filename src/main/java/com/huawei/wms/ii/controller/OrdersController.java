@@ -7,11 +7,15 @@ import com.huawei.wms.ii.beans.OrdersFacade;
 import com.huawei.wms.ii.custom.IssuedItem;
 import com.huawei.wms.ii.entities.Items;
 import com.huawei.wms.ii.entities.OrderLineItem;
+import com.huawei.wms.ii.entities.OrderLog;
+import com.huawei.wms.ii.entities.Warehouse;
+import com.huawei.wms.ii.entities.WarehouseLog;
 import java.io.IOException;
 
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -63,6 +67,10 @@ public class OrdersController implements Serializable {
     private WarehouseController warehouseController;
     @Inject
     private ItemStatusController itemStatusController;
+    @Inject
+    private OrderLogController orderLogController;
+    @Inject
+    private WarehouseLogController warehouseLogController;
     
     public OrdersController() {
     }
@@ -103,6 +111,7 @@ public class OrdersController implements Serializable {
         selected.setRegion(userController.getLoggedInuser().getRegion());
         selected.setOrderType(orderTypeController.getOrderType("In-Bound"));
         selected.setOrderStatus(orderStatusController.getOrderStatus("Pending Approval"));
+        selected.setAssignmentGroup(userController.getLoggedInuser().getWarehouse());
         initializeEmbeddableKey();
         return selected; 
     }
@@ -116,6 +125,8 @@ public class OrdersController implements Serializable {
         selected.setRegion(userController.getLoggedInuser().getRegion());
         selected.setOrderType(orderTypeController.getOrderType("Transfer"));
         selected.setOrderStatus(orderStatusController.getOrderStatus("Pending Approval"));
+        selected.setFromWarehouse(userController.getLoggedInuser().getWarehouse());
+        selected.setAssignmentGroup(userController.getLoggedInuser().getWarehouse());
         initializeEmbeddableKey();
         return selected; 
     }
@@ -129,6 +140,8 @@ public class OrdersController implements Serializable {
         selected.setRegion(userController.getLoggedInuser().getRegion());
         selected.setOrderType(orderTypeController.getOrderType("Issued Material (OTS)"));
         selected.setOrderStatus(orderStatusController.getOrderStatus("Pending Approval"));
+        selected.setFromWarehouse(userController.getLoggedInuser().getWarehouse());
+        selected.setAssignmentGroup(userController.getLoggedInuser().getWarehouse());
         initializeEmbeddableKey();
         return selected;    
     }
@@ -142,6 +155,32 @@ public class OrdersController implements Serializable {
         }
     }
 
+    public void logOrder(Orders selectedOrder,String description){
+        if(selectedOrder!=null){
+            OrderLog log = new OrderLog();
+            log.setOrderId(selectedOrder);
+            log.setActionBy(userController.getLoggedInuser());
+            log.setDescription(description);
+            orderLogController.setSelected(log);
+            orderLogController.create();
+        }
+    }
+    
+    public void logWarehouse(Warehouse warehouse,BigInteger previousQty,BigInteger currentQty,String comment){
+        if(selected!=null){
+            WarehouseLog log = new WarehouseLog();
+            log.setWarehouseId(warehouse);
+            log.setActionType(selected.getOrderType());
+            log.setActionBy(userController.getLoggedInuser());
+            log.setCurrentQty(currentQty);
+            log.setPreviousQty(previousQty);
+            log.setLogComment(comment);
+//            warehouse.setWarehouseLogCollection(Arrays.asList(log));
+            warehouseLogController.setSelected(log);
+            warehouseLogController.create();
+        }
+    }
+    
     public void createInBoundOrder(){
         if(selected!=null){
             if(selected.getOrderLineItemCollection()!=null){
@@ -158,7 +197,9 @@ public class OrdersController implements Serializable {
                     }
                 }
                 if(allGood){
-                    persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("OrdersCreated"));
+                    selected.setAssignmentGroup(selected.getToWarehouse());
+                    selected = persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("OrdersCreated"));
+                    logOrder(selected,"CREATE");
                     clearValues();
                     redirect();
                 }
@@ -180,7 +221,7 @@ public class OrdersController implements Serializable {
                             allGood=false;
                             break;
                         }
-                        if(((OrderLineItem)lineItem).getQty().compareTo(getGoodStockQty((OrderLineItem)lineItem))>0){
+                        if(((OrderLineItem)lineItem).getQty().compareTo(getGoodOrUsedStockQty((OrderLineItem)lineItem))>0){
                             JsfUtil.addErrorMessage("The Qty is more than what's available");
                             allGood=false;
                             break;
@@ -190,7 +231,9 @@ public class OrdersController implements Serializable {
                     }
                 }
                 if(allGood){
-                    persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("OrdersCreated"));
+                    selected.setAssignmentGroup(selected.getToWarehouse());
+                    selected = persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("OrdersCreated"));
+                    logOrder(selected,"CREATE");
                     updateGoodWarehouseInventory(lineItems);
                     clearValues();
                     redirect();
@@ -217,7 +260,9 @@ public class OrdersController implements Serializable {
                 selected.getOrderLineItemCollection().add(issuedItem.getIssued());
                 selected.getOrderLineItemCollection().add(lineItemReturnable);
             }
-            persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("OrdersCreated"));
+            selected.setAssignmentGroup(selected.getFromWarehouse());
+            selected = persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("OrdersCreated"));
+            logOrder(selected,"CREATE");
             clearValues();
             redirect();
         }
@@ -225,6 +270,7 @@ public class OrdersController implements Serializable {
     
     public void update() {
         persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("OrdersUpdated"));
+        clearValues();
     }
 
     public void destroy() {
@@ -254,12 +300,12 @@ public class OrdersController implements Serializable {
 
     
     
-    private void persist(PersistAction persistAction, String successMessage) {
+    private Orders persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
             setEmbeddableKeys();
             try {
                 if (persistAction != PersistAction.DELETE) {
-                    getFacade().edit(selected);
+                    selected = getFacade().merge(selected);
                 } else {
                     getFacade().remove(selected);
                 }
@@ -279,7 +325,9 @@ public class OrdersController implements Serializable {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                 JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             }
+            return selected;
         }
+        return null;
     }
 
     public Orders getOrders(java.lang.Long id) {
@@ -297,10 +345,14 @@ public class OrdersController implements Serializable {
     private void updateGoodWarehouseInventory(Object[] lineItems) {
         for (Object lineItem : lineItems) {
             OrderLineItem orderLineItem = (OrderLineItem) lineItem;
-                warehouseInventoryController.setSelected(warehouseInventoryController.findGoodItem(
+                warehouseInventoryController.setSelected(warehouseInventoryController.findGoodOrUsedItem(
                         orderLineItem.getOrderId().getFromWarehouse(),
                         orderLineItem.getItemId()));
-                warehouseInventoryController.deductFromSelectedGood(orderLineItem.getQty());
+                BigInteger current = warehouseInventoryController.deductFromSelectedGood(orderLineItem.getQty());
+                logWarehouse( orderLineItem.getOrderId().getFromWarehouse(), 
+                              current, 
+                              current.subtract(orderLineItem.getQty()), 
+                              "Good/Used Item deduction, waiting for Transfer Approval");
         }
     }
 
@@ -387,9 +439,11 @@ public class OrdersController implements Serializable {
     public void removeFromLineItems(final SelectEvent event){
         OrderLineItem obj = (OrderLineItem) event.getObject();
         if(selected!=null){
+            if(!obj.getLineItemStatus().getStatusName().equals("Accepted")){
           if(selected.getOrderLineItemCollection()!=null){
             selected.getOrderLineItemCollection().remove(obj);
             }  
+            }
         }
     }
     
@@ -402,10 +456,10 @@ public class OrdersController implements Serializable {
         }
     }
     
-    public BigInteger getGoodStockQty(OrderLineItem lineItem){
+    public BigInteger getGoodOrUsedStockQty(OrderLineItem lineItem){
         if(selected!=null){
             if(selected.getFromWarehouse()!=null){
-                return warehouseInventoryController.findGoodStockQty(lineItem.getItemId(),selected.getFromWarehouse());
+                return warehouseInventoryController.findGoodorUsedStockQty(lineItem.getItemId(),selected.getFromWarehouse());
             }else{
                 JsfUtil.addErrorMessage("You need to select a warehouse");
             }
@@ -444,7 +498,7 @@ public class OrdersController implements Serializable {
        
     public void redirect(){
         try {
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/WMS-II/app/orders/order_queue.xhtml");
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/WMS-II/app/common/order_queue.xhtml");        
         } catch (IOException ex) {
             Logger.getLogger(OrdersController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -488,6 +542,8 @@ public class OrdersController implements Serializable {
         if(selectedItems!=null){
             for (OrderLineItem selectedItem : selectedItems) {
             if(selectedItem.getLineItemStatus().getStatusName().equals("Pending Approval")){
+                //<editor-fold defaultstate="collapsed" desc="In-Bound">
+                
                 if(selectedItem.getOrderId().getOrderType().getTypeName().equals("In-Bound")){
                     selectedItem.setLineItemStatus(orderLineItemStatusController.getOrderLineItemStatus("Accepted"));
                     
@@ -500,11 +556,20 @@ public class OrdersController implements Serializable {
                             selectedItem.getOrderId().getToWarehouse(),
                             selectedItem.getItemId(),
                             itemStatusController.getItemStatus("Good")));
-                    warehouseInventoryController.addToSelected(selectedItem.getQty());
+                    BigInteger current = warehouseInventoryController.addToSelected(selectedItem.getQty());
+                    logWarehouse(selectedItem.getOrderId().getToWarehouse(), 
+                                    current, 
+                                    current.add(selectedItem.getQty()), 
+                                    "Adding Good/Used Item to warehouse");
                     selected.getOrderLineItemCollection().add(selectedItem);
                     updateSelectedStatus();
                     update();
-                }else if(selectedItem.getOrderId().getOrderType().getTypeName().equals("Transfer")){
+                    logOrder(selected,"Line Item Approved: "+selectedItem.getItemId());
+//</editor-fold>
+                }else 
+                //<editor-fold defaultstate="collapsed" desc="Transfer">
+                    
+                    if(selectedItem.getOrderId().getOrderType().getTypeName().equals("Transfer")){
                     selectedItem.setLineItemStatus(orderLineItemStatusController.getOrderLineItemStatus("Accepted"));
                     selected.getOrderLineItemCollection().remove(selectedItem);
                     
@@ -512,14 +577,29 @@ public class OrdersController implements Serializable {
                             selectedItem.getOrderId().getToWarehouse(),
                             selectedItem.getItemId(),
                             itemStatusController.getItemStatus("Good")));
-                    warehouseInventoryController.addToSelected(selectedItem.getQty());
+                    if(warehouseInventoryController.getSelected()==null){
+                         warehouseInventoryController.setSelected(warehouseInventoryController.findWarehouseItem(
+                            selectedItem.getOrderId().getToWarehouse(),
+                            selectedItem.getItemId(),
+                            itemStatusController.getItemStatus("Used")));
+                    }
+                    BigInteger current = warehouseInventoryController.addToSelected(selectedItem.getQty());
                     
                     orderLineItemController.setSelected(selectedItem);
                     orderLineItemStatusController.update();
                     selected.getOrderLineItemCollection().add(selectedItem);
+                    logWarehouse(selectedItem.getOrderId().getToWarehouse(), 
+                                    current, 
+                                    current.add(selectedItem.getQty()), 
+                                    "Adding Good/Used Item to warehouse");
                     updateSelectedStatus();
                     update();
-                }else if(selectedItem.getOrderId().getOrderType().getTypeName().equals("Issued Material (OTS)")){
+                    logOrder(selected,"Line Item Approved: "+selectedItem.getItemId());
+                    
+//</editor-fold>
+                }else 
+                //<editor-fold defaultstate="collapsed" desc="Issued">
+                    if(selectedItem.getOrderId().getOrderType().getTypeName().equals("Issued Material (OTS)")){
                     selectedItem.setLineItemStatus(orderLineItemStatusController.getOrderLineItemStatus("Accepted"));
                     selected.getOrderLineItemCollection().remove(selectedItem);
                     if(selectedItem.getReturnable()!=null){
@@ -528,14 +608,22 @@ public class OrdersController implements Serializable {
                             selectedItem.getOrderId().getFromWarehouse(),
                             selectedItem.getItemId(),
                             selectedItem.getReturnableStatus()));
-                            warehouseInventoryController.addToSelected(selectedItem.getQty());
+                            BigInteger current = warehouseInventoryController.addToSelected(selectedItem.getQty());
+                            logWarehouse(selectedItem.getOrderId().getFromWarehouse(), 
+                                    current, 
+                                    current.add(selectedItem.getQty()), 
+                                    "Adding "+selectedItem.getReturnableStatus().getStatusName()+" Item to warehouse");
                         }
                     }else{
                             warehouseInventoryController.setSelected(warehouseInventoryController.findWarehouseItem(
                             selectedItem.getOrderId().getFromWarehouse(),
                             selectedItem.getItemId(),
                             itemStatusController.getItemStatus("Good")));
-                            warehouseInventoryController.subtractFromSelected(selectedItem.getQty());
+                            BigInteger current = warehouseInventoryController.subtractFromSelected(selectedItem.getQty());
+                            logWarehouse(selectedItem.getOrderId().getFromWarehouse(), 
+                                    current, 
+                                    current.subtract(selectedItem.getQty()), 
+                                    "Subtracting Good/Used Item to warehouse");
                     }
                     
                     orderLineItemController.setSelected(selectedItem);
@@ -544,12 +632,14 @@ public class OrdersController implements Serializable {
                     selected.getOrderLineItemCollection().add(selectedItem);
                     updateSelectedStatus();
                     update();
+                    logOrder(selected,"Line Item Approved: "+selectedItem.getItemId());
                 }
+                //</editor-fold>
             }
             }
             warehouseOrders=null;
             selectedItems=null;
-            selected=null;
+//            selected=null;
         }
     }
     
@@ -567,6 +657,7 @@ public class OrdersController implements Serializable {
                     
                     selected.getOrderLineItemCollection().add(selectedItem);
                     updateSelectedStatus();
+                    logOrder(selected, "Line Item Rejected: "+selectedItem);
                     update();
                 }else if(selectedItem.getOrderId().getOrderType().getTypeName().equals("Transfer")){
                     selectedItem.setLineItemStatus(orderLineItemStatusController.getOrderLineItemStatus("Rejected"));
@@ -582,6 +673,7 @@ public class OrdersController implements Serializable {
                     
                     selected.getOrderLineItemCollection().add(selectedItem);
                     updateSelectedStatus();
+                    logOrder(selected, "Line Item Rejected: "+selectedItem);
                     update();
                 }else if(selectedItem.getOrderId().getOrderType().getTypeName().equals("Issued Material (OTS)")){
                     selectedItem.setLineItemStatus(orderLineItemStatusController.getOrderLineItemStatus("Rejected"));
@@ -591,13 +683,106 @@ public class OrdersController implements Serializable {
                     orderLineItemStatusController.update();
                     selected.getOrderLineItemCollection().add(selectedItem);
                     updateSelectedStatus();
+                    logOrder(selected, "Line Item Rejected: "+selectedItem);
                     update();
                     }
                 }
             }
             warehouseOrders=null;
             selectedItems=null;
-            selected=null;
+//            selected=null;
+        }
+    }
+    
+    public void handleReassignInBound(){
+        if(selected!=null){
+            if(selected.getOrderLineItemCollection()!=null){
+                Object[] lineItems = selected.getOrderLineItemCollection().toArray();
+                boolean allGood = true;
+                for (Object lineItem : lineItems) {
+                    if(((OrderLineItem)lineItem).getQty()!=null){
+                        if(((OrderLineItem)lineItem).getQty().compareTo(BigInteger.ZERO)==0){
+                            JsfUtil.addErrorMessage("You need to add QTY to the Order Line Item");
+                            allGood=false;
+                        }
+                    }else{
+                        allGood = false;
+                    }
+                if(!((OrderLineItem)lineItem).getLineItemStatus().getStatusName().equals("Accepted")){
+                ((OrderLineItem)lineItem).setLineItemStatus(orderLineItemStatusController.getOrderLineItemStatus("Pending Approval"));
+                }
+                }
+                if(allGood){
+                    selected.setAssignmentGroup(selected.getToWarehouse());
+                    selected.setOrderStatus(orderStatusController.getOrderStatus("Pending Approval"));
+                    logOrder(selected,"REASSIGNED");
+                    update();
+                    clearValues();
+                    redirect();
+                }
+            }else{
+                JsfUtil.addErrorMessage("You need to add In-Bound Items");
+            }
+        }
+    }
+    
+    public void handleReassignTransfer(){
+        if(selected!=null){
+            if(selected.getOrderLineItemCollection()!=null){
+                Object[] lineItems = selected.getOrderLineItemCollection().toArray();
+                boolean allGood = true;
+                for (Object lineItem : lineItems) {
+                    if(((OrderLineItem)lineItem).getQty()!=null){
+                        if(((OrderLineItem)lineItem).getQty().compareTo(BigInteger.ZERO)==0){
+                            JsfUtil.addErrorMessage("You need to add QTY to the Order Line Item");
+                            allGood=false;
+                            break;
+                        }
+                        if(((OrderLineItem)lineItem).getQty().compareTo(getGoodOrUsedStockQty((OrderLineItem)lineItem))>0){
+                            JsfUtil.addErrorMessage("The Qty is more than what's available");
+                            allGood=false;
+                            break;
+                        }
+                    }else{
+                        allGood = false;
+                    }
+                if(!((OrderLineItem)lineItem).getLineItemStatus().getStatusName().equals("Accepted")){
+                ((OrderLineItem)lineItem).setLineItemStatus(orderLineItemStatusController.getOrderLineItemStatus("Pending Approval"));
+                }
+                }
+                if(allGood){
+                    selected.setAssignmentGroup(selected.getToWarehouse());
+                    selected.setOrderStatus(orderStatusController.getOrderStatus("Pending Approval"));
+                    logOrder(selected,"REASSIGN");
+                    update();
+                    updateGoodWarehouseInventory(lineItems);
+                    clearValues();
+                    redirect();
+                }
+            }else{
+                JsfUtil.addErrorMessage("You need to add Transfer Items");
+            }
+        }
+    }
+    
+    public void handleReassignIssue(){
+        if(selected!=null){
+            if(selected.getOrderLineItemCollection()!=null){
+                Object[] lineItems = selected.getOrderLineItemCollection().toArray();
+                for (Object lineItem : lineItems) {
+                    if(!((OrderLineItem)lineItem).getLineItemStatus().getStatusName().equals("Accepted")){
+                    ((OrderLineItem)lineItem).setLineItemStatus(orderLineItemStatusController.getOrderLineItemStatus("Pending Approval"));
+                    }
+                }
+                    selected.setAssignmentGroup(selected.getFromWarehouse());
+                    selected.setOrderStatus(orderStatusController.getOrderStatus("Pending Approval"));
+                    logOrder(selected,"REASSIGN");
+                    update();
+                    clearValues();
+                    redirect();
+            }else{
+                JsfUtil.addErrorMessage("You need to add Issued Items");
+            }
         }
     }
     
@@ -626,7 +811,6 @@ public class OrdersController implements Serializable {
             }
         }
     }
-    
     
     public void handleFileUpload(FileUploadEvent event) {
         UploadedFile file = event.getFile();

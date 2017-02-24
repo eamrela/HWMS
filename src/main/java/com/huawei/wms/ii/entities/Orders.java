@@ -89,6 +89,9 @@ public class Orders implements Serializable {
     @JoinColumn(name = "to_warehouse", referencedColumnName = "id")
     @ManyToOne
     private Warehouse toWarehouse;
+    @JoinColumn(name = "assignment_group", referencedColumnName = "id")
+    @ManyToOne
+    private Warehouse assignmentGroup;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "orderId")
     private Collection<OrderLineItem> orderLineItemCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "orderId")
@@ -211,6 +214,14 @@ public class Orders implements Serializable {
 
     public void setToWarehouse(Warehouse toWarehouse) {
         this.toWarehouse = toWarehouse;
+    }
+
+    public Warehouse getAssignmentGroup() {
+        return assignmentGroup;
+    }
+
+    public void setAssignmentGroup(Warehouse assignmentGroup) {
+        this.assignmentGroup = assignmentGroup;
     }
 
     @XmlTransient

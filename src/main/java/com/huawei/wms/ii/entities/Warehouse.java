@@ -68,12 +68,16 @@ public class Warehouse implements Serializable {
     @JoinColumn(name = "warehouse_region", referencedColumnName = "region_name")
     @ManyToOne
     private Region warehouseRegion;
+    @OneToMany(mappedBy = "warehouse")
+    private Collection<Users> usersCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "warehouse")
     private Collection<WarehouseInventory> warehouseInventoryCollection;
     @OneToMany(mappedBy = "fromWarehouse")
     private Collection<Orders> ordersCollection;
     @OneToMany(mappedBy = "toWarehouse")
     private Collection<Orders> ordersCollection1;
+    @OneToMany(mappedBy = "assignmentGroup")
+    private Collection<Orders> ordersCollection2;
 
     public Warehouse() {
     }
@@ -148,6 +152,15 @@ public class Warehouse implements Serializable {
     }
 
     @XmlTransient
+    public Collection<Users> getUsersCollection() {
+        return usersCollection;
+    }
+
+    public void setUsersCollection(Collection<Users> usersCollection) {
+        this.usersCollection = usersCollection;
+    }
+
+    @XmlTransient
     public Collection<WarehouseInventory> getWarehouseInventoryCollection() {
         return warehouseInventoryCollection;
     }
@@ -172,6 +185,15 @@ public class Warehouse implements Serializable {
 
     public void setOrdersCollection1(Collection<Orders> ordersCollection1) {
         this.ordersCollection1 = ordersCollection1;
+    }
+
+    @XmlTransient
+    public Collection<Orders> getOrdersCollection2() {
+        return ordersCollection2;
+    }
+
+    public void setOrdersCollection2(Collection<Orders> ordersCollection2) {
+        this.ordersCollection2 = ordersCollection2;
     }
 
     @Override
